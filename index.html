@@ -1,0 +1,6485 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>Subscription Info</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  -webkit-text-size-adjust:100%;
+}
+
+body{
+  margin:0;
+  padding:6px 8px 20px;
+  background:#f7f7f8;
+  color:#111111;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+
+.page{
+  max-width:480px;
+  margin:0 auto;
+}
+
+.notice-banner{
+  background:#fff8e1;
+  border:1px solid #ffe082;
+  color:#7a5b00;
+  border-radius:10px;
+  padding:6px 10px;
+  margin:0 0 8px;
+  font-size:8px;
+  line-height:1.45;
+}
+
+.layout{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.col{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  min-width:0;
+}
+
+.card{
+  background:#ffffff;
+  border-radius:12px;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.04),
+    0 8px 20px rgba(0,0,0,.06);
+  padding:8px 10px;
+  margin-bottom:0;
+}
+
+h1{
+  font-size:11px;
+  font-weight:700;
+  margin:0 0 5px;
+}
+
+h2{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  font-size:10px;
+  font-weight:700;
+  margin:8px 0 4px;
+}
+
+h2:first-child{
+  margin-top:0;
+}
+
+p.field{
+  margin:0 0 2px;
+  font-size:9px;
+}
+
+.badge{
+  display:inline-block;
+  background:#3fb950;
+  color:#fff;
+  font-size:7px;
+  font-weight:600;
+  padding:1px 4px;
+  border-radius:4px;
+  margin-left:2px;
+  vertical-align:middle;
+}
+
+.badge.expired{
+  background:#e0524a;
+}
+
+.badge.disabled{
+  background:#8a8a8a;
+}
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
+ul.links{
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+
+ul.links li{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  margin-bottom:2px;
+  padding:3px 4px;
+  border-radius:6px;
+  width:max-content;
+  max-width:100%;
+}
+
+ul.links li::before{
+  content:'•';
+  font-size:8px;
+  color:#111;
+  flex-shrink:0;
+}
+
+.link-text{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:7px;
+  color:#222;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:110px;
+  flex-shrink:1;
+}
+
+.btn{
+  font-family:inherit;
+  font-size:7px;
+  color:#111;
+  background:#eeeeee;
+  border:1px solid #dcdcdc;
+  border-radius:5px;
+  padding:1px 5px;
+  cursor:pointer;
+  flex-shrink:0;
+  white-space:nowrap;
+}
+
+.btn:active{
+  background:#e0e0e0;
+  transform:scale(.94);
+}
+
+.btn.copied{
+  background:#d5f2dc;
+  border-color:#3fb950;
+  color:#1c7a34;
+}
+
+.btn.copy-failed{
+  background:#fdecea;
+  border-color:#e0524a;
+  color:#a33;
+}
+
+.btn-copy-all{
+  font-size:8px;
+  padding:2px 8px;
+  background:#111;
+  color:#fff;
+  border-color:#111;
+}
+
+.btn-copy-all.copied{
+  background:#3fb950;
+  border-color:#3fb950;
+  color:#fff;
+}
+
+.btn-copy-all.copy-failed{
+  background:#e0524a;
+  border-color:#e0524a;
+  color:#fff;
+}
+
+.links-toggle{
+  cursor:pointer;
+  user-select:none;
+}
+
+#linksChevron{
+  display:inline-block;
+  transition:transform .15s ease;
+}
+
+#linksChevron.collapsed{
+  transform:rotate(-90deg);
+}
+
+/* =========================================================
+   USER
+   ========================================================= */
+
+.user-card-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.usage-rings{
+  display:flex;
+  gap:8px;
+  flex-shrink:0;
+}
+
+.ring-block{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+}
+
+.ring-caption{
+  font-size:6px;
+  color:#777;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.02em;
+}
+
+.usage-ring-wrap{
+  position:relative;
+  width:46px;
+  height:46px;
+  flex-shrink:0;
+}
+
+.usage-ring{
+  width:100%;
+  height:100%;
+  transform:rotate(-90deg);
+  display:block;
+}
+
+.ring-bg{
+  fill:none;
+  stroke:#ececec;
+  stroke-width:3;
+}
+
+.ring-fg{
+  fill:none;
+  stroke:#3fb950;
+  stroke-width:3;
+  stroke-linecap:round;
+  transition:stroke-dasharray .4s ease;
+}
+
+.ring-fg.ring-warn{
+  stroke:#e0a800;
+}
+
+.ring-fg.ring-danger{
+  stroke:#e0524a;
+}
+
+.ring-fg.ring-inf{
+  stroke:#9aa0a6;
+}
+
+.usage-ring-label{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:7px;
+  font-weight:700;
+  color:#111;
+}
+
+/* =========================================================
+   DATA USAGE
+   ========================================================= */
+
+.usage-headline{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:2px 0 10px;
+}
+
+.usage-headline-item{
+  min-width:0;
+}
+
+.usage-headline-value{
+  font-size:16px;
+  line-height:1.15;
+  font-weight:800;
+  letter-spacing:-.2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.usage-headline-label{
+  display:block;
+  font-size:7px;
+  line-height:1.3;
+  font-weight:600;
+  color:#777;
+  text-transform:uppercase;
+  letter-spacing:.02em;
+  margin-top:2px;
+}
+
+.usage-range-selector{
+  display:flex;
+  gap:4px;
+  margin:0 0 10px;
+  flex-wrap:wrap;
+}
+
+.usage-range-btn{
+  font-family:inherit;
+  font-size:7px;
+  font-weight:600;
+  color:#555;
+  background:#f0f0f0;
+  border:1px solid #e2e2e2;
+  border-radius:99px;
+  padding:3px 8px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.usage-range-btn:active{
+  transform:scale(.96);
+}
+
+.usage-range-btn.active{
+  background:#111;
+  border-color:#111;
+  color:#fff;
+}
+
+.usage-summary{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:2px;
+}
+
+.usage-stat{
+  min-width:0;
+}
+
+.usage-stat-value{
+  font-size:9px;
+  line-height:1.2;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.usage-stat-label{
+  font-size:6.5px;
+  line-height:1.2;
+  color:#777;
+  margin-top:2px;
+}
+
+/* =========================================================
+   LINE CHART
+   ========================================================= */
+
+.line-chart-wrap{
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  padding:5px 0 2px;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+
+.line-chart-wrap::-webkit-scrollbar{
+  display:none;
+}
+
+.line-chart{
+  position:relative;
+  width:100%;
+  min-width:540px;
+  height:150px;
+}
+
+.line-chart svg{
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+
+.usage-line-path{
+  fill:none;
+  stroke:#3f8cff;
+  stroke-width:1.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  vector-effect:non-scaling-stroke;
+}
+
+.usage-area-path{
+  fill:url(#usageLineGradient);
+  stroke:none;
+}
+
+.usage-line-point{
+  fill:#3f8cff;
+  stroke:#ffffff;
+  stroke-width:1.5;
+  vector-effect:non-scaling-stroke;
+}
+
+.usage-line-point.active{
+  fill:#1c5fd6;
+}
+
+.usage-chart-hit{
+  fill:transparent;
+  pointer-events:all;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
+.usage-chart-hit:focus{
+  outline:none;
+}
+
+.usage-chart-hit:focus-visible{
+  outline:2px solid #3f8cff;
+  outline-offset:-2px;
+}
+
+.usage-tooltip{
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:2;
+  pointer-events:none;
+  background:rgba(17,17,17,.92);
+  color:#fff;
+  font-size:7px;
+  line-height:1.5;
+  padding:4px 8px;
+  border-radius:6px;
+  box-shadow:0 4px 10px rgba(0,0,0,.18);
+  max-width:calc(100% - 12px);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.usage-tooltip strong{
+  display:block;
+  font-size:7.5px;
+  font-weight:800;
+}
+
+.usage-grid-line{
+  stroke:#888;
+  stroke-opacity:.13;
+  stroke-width:1;
+  vector-effect:non-scaling-stroke;
+}
+
+.usage-day-label{
+  font-size:18px;
+  fill:#777;
+  text-anchor:middle;
+  dominant-baseline:hanging;
+}
+
+.usage-chart-axis{
+  display:flex;
+  justify-content:space-between;
+  margin:4px 2px 0;
+  font-size:5.5px;
+  color:#777;
+}
+
+.usage-peak{
+  margin-top:7px;
+  font-size:6.5px;
+  color:#777;
+}
+
+.usage-peak strong{
+  color:#111;
+  font-weight:800;
+}
+
+.usage-empty{
+  font-size:8px;
+  color:#888;
+}
+
+@media (min-width:600px){
+
+  .page{
+    max-width:640px;
+  }
+
+  .card{
+    border-radius:16px;
+    padding:14px 16px;
+  }
+
+  .layout{
+    gap:12px;
+  }
+
+  .col{
+    gap:12px;
+  }
+
+  .notice-banner{
+    font-size:12px;
+    padding:8px 12px;
+    border-radius:12px;
+  }
+
+  h1{
+    font-size:16px;
+    margin-bottom:8px;
+  }
+
+  h2{
+    font-size:14px;
+    margin:14px 0 6px;
+  }
+
+  p.field{
+    font-size:13px;
+    margin-bottom:4px;
+  }
+
+  .badge{
+    font-size:11px;
+    padding:2px 7px;
+    border-radius:5px;
+  }
+
+  ul.links li{
+    gap:8px;
+    margin-bottom:4px;
+    padding:5px 6px;
+  }
+
+  ul.links li::before{
+    font-size:12px;
+  }
+
+  .link-text{
+    font-size:12px;
+    max-width:280px;
+  }
+
+  .btn{
+    font-size:11px;
+    padding:3px 10px;
+    border-radius:6px;
+  }
+
+  .btn-copy-all{
+    font-size:12px;
+    padding:4px 12px;
+  }
+
+  .app-name{
+    font-size:12px;
+  }
+
+  .app-desc{
+    font-size:11px;
+  }
+
+  .app-actions a{
+    font-size:11px;
+    padding:3px 9px;
+  }
+
+  .app-item img{
+    width:32px;
+    height:32px;
+  }
+
+  .usage-ring-wrap{
+    width:60px;
+    height:60px;
+  }
+
+  .usage-ring-label{
+    font-size:11px;
+  }
+
+  .ring-caption{
+    font-size:9px;
+  }
+
+  .usage-headline-value{
+    font-size:22px;
+  }
+
+  .usage-headline-label{
+    font-size:10px;
+  }
+
+  .usage-range-btn{
+    font-size:11px;
+    padding:4px 11px;
+  }
+
+  .usage-tooltip{
+    font-size:11px;
+    padding:6px 10px;
+  }
+
+  .usage-tooltip strong{
+    font-size:12px;
+  }
+
+  .line-chart{
+    height:180px;
+  }
+
+  .usage-day-label{
+    font-size:15px;
+  }
+
+}
+
+/* =========================================================
+   DESKTOP
+   ========================================================= */
+
+@media (min-width:1024px){
+
+  .page{
+    max-width:900px;
+  }
+
+  .card{
+    border-radius:18px;
+    padding:18px 22px;
+    box-shadow:
+      0 2px 4px rgba(0,0,0,.04),
+      0 14px 32px rgba(0,0,0,.07);
+  }
+
+  h1{
+    font-size:20px;
+  }
+
+  h2{
+    font-size:17px;
+  }
+
+  p.field{
+    font-size:15px;
+  }
+
+  .badge{
+    font-size:12px;
+  }
+
+  .link-text{
+    font-size:13px;
+    max-width:230px;
+  }
+
+  .btn{
+    font-size:12px;
+    padding:4px 12px;
+  }
+
+  .btn-copy-all{
+    font-size:13px;
+    padding:5px 14px;
+  }
+
+  .btn:hover{
+    box-shadow:0 3px 8px rgba(0,0,0,.12);
+    transform:translateY(-1px);
+  }
+
+  ul.links li:hover{
+    background:#f5f6f7;
+    box-shadow:0 2px 6px rgba(0,0,0,.05);
+  }
+
+  .usage-ring-wrap{
+    width:72px;
+    height:72px;
+  }
+
+  .usage-ring-label{
+    font-size:13px;
+  }
+
+  .ring-caption{
+    font-size:10px;
+  }
+
+  .usage-headline-value{
+    font-size:24px;
+  }
+
+}
+
+/* =========================================================
+   WIDE
+   ========================================================= */
+
+@media (
+  min-width:820px
+),
+(
+  min-width:640px
+) and (
+  orientation:landscape
+){
+
+  .page{
+    max-width:980px;
+  }
+
+  .layout{
+    flex-direction:row;
+    align-items:flex-start;
+  }
+
+  .col{
+    flex:1 1 0;
+  }
+
+  .link-text{
+    max-width:200px;
+  }
+
+}
+
+/* =========================================================
+   PORTRAIT
+   ========================================================= */
+
+@media (
+  max-width:819px
+) and (
+  orientation:portrait
+){
+
+  .layout{
+    flex-direction:column;
+  }
+
+  .col{
+    flex:none;
+  }
+
+}
+
+/* =========================================================
+   APPS
+   ========================================================= */
+
+.app-item{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 2px;
+  border-top:1px solid #f0f0f0;
+}
+
+.app-item:first-child{
+  border-top:none;
+}
+
+.app-item img{
+  width:22px;
+  height:22px;
+  border-radius:5px;
+  flex-shrink:0;
+  object-fit:cover;
+  background:#eee;
+}
+
+.app-name{
+  font-size:8px;
+  font-weight:600;
+}
+
+.app-desc{
+  font-size:7px;
+  color:#777;
+  margin-top:1px;
+}
+
+.app-actions{
+  display:flex;
+  gap:3px;
+  margin-top:3px;
+  flex-wrap:wrap;
+}
+
+.app-actions a{
+  font-size:7px;
+  padding:2px 6px;
+  border-radius:5px;
+  background:#eee;
+  border:1px solid #dcdcdc;
+  color:#111;
+  text-decoration:none;
+}
+
+.app-actions a.im{
+  background:#111;
+  color:#fff;
+  border-color:#111;
+}
+
+/* =========================================================
+   INLINE QR (PER LINK ROW)
+   ========================================================= */
+
+ul.links li.active-qr{
+  background:#eef5ff;
+  box-shadow:inset 0 0 0 1px rgba(63,140,255,.3);
+}
+
+li.qr-row{
+  list-style:none;
+  display:block;
+  width:100%;
+  margin:2px 0 6px;
+}
+
+.qr-inline-box{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  width:130px;
+  max-width:100%;
+  margin:0 0 0 12px;
+  padding:8px;
+  border-radius:12px;
+  background:#fafafa;
+  border:1px dashed #e2e2e2;
+}
+
+.qr-inline-box #qrInlineBox{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+}
+
+.qr-inline-box #qrInlineBox img,
+.qr-inline-box #qrInlineBox canvas{
+  width:100%;
+  height:auto;
+  max-width:110px;
+  image-rendering:-webkit-optimize-contrast;
+  image-rendering:crisp-edges;
+}
+
+.qr-inline-label{
+  font-size:7px;
+  font-weight:700;
+  letter-spacing:.02em;
+  color:#666;
+  text-transform:uppercase;
+  max-width:110px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.qr-inline-close{
+  position:absolute;
+  top:-8px;
+  right:-8px;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#eeeeee;
+  border:1px solid #dcdcdc;
+  color:#333;
+  font-size:10px;
+  line-height:1;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 2px 6px rgba(0,0,0,.15);
+}
+
+.qr-inline-close:active{
+  background:#e0e0e0;
+  transform:scale(.9);
+}
+
+@media (min-width:600px){
+
+  .qr-inline-box{
+    width:180px;
+    border-radius:16px;
+    padding:14px;
+  }
+
+  .qr-inline-box #qrInlineBox img,
+  .qr-inline-box #qrInlineBox canvas{
+    max-width:152px;
+  }
+
+  .qr-inline-label{
+    font-size:11px;
+    max-width:152px;
+  }
+
+  .qr-inline-close{
+    width:26px;
+    height:26px;
+    font-size:13px;
+    top:-10px;
+    right:-10px;
+  }
+
+}
+
+@media (min-width:1024px){
+
+  .qr-inline-box{
+    width:220px;
+    padding:18px;
+  }
+
+  .qr-inline-box #qrInlineBox img,
+  .qr-inline-box #qrInlineBox canvas{
+    max-width:188px;
+  }
+
+  .qr-inline-label{
+    font-size:12px;
+    max-width:188px;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <div
+    class="notice-banner"
+    id="noticeBanner"
+    style="display:none;">
+  </div>
+
+  <div class="layout">
+
+    <!-- =====================================================
+         LEFT
+         ===================================================== -->
+
+    <div class="col col-main">
+
+      <!-- USER INFORMATION -->
+
+      <div class="card">
+
+        <div class="user-card-top">
+
+          <div>
+
+            <h1>User Information</h1>
+
+            <p class="field">
+              Username:
+              <span id="unameOut">—</span>
+            </p>
+
+            <p class="field">
+              Status:
+              <span
+                class="badge"
+                id="statusBadge">
+                active
+              </span>
+            </p>
+
+            <p class="field">
+              Data Limit:
+              <span id="limitOut">—</span>
+            </p>
+
+            <p class="field">
+              Data Used:
+              <span id="usedOut">—</span>
+            </p>
+
+            <p class="field">
+              Expiration Date:
+              <span id="expireOut">—</span>
+            </p>
+
+          </div>
+
+          <div class="usage-rings">
+
+            <!-- DATA RING -->
+
+            <div class="ring-block">
+
+              <div class="usage-ring-wrap">
+
+                <svg
+                  viewBox="0 0 36 36"
+                  class="usage-ring">
+
+                  <path
+                    class="ring-bg"
+                    d="M18 2.0845
+                       a 15.9155 15.9155 0 0 1 0 31.831
+                       a 15.9155 15.9155 0 0 1 0 -31.831" />
+
+                  <path
+                    class="ring-fg"
+                    id="usageRingFg"
+                    stroke-dasharray="0,100"
+                    d="M18 2.0845
+                       a 15.9155 15.9155 0 0 1 0 31.831
+                       a 15.9155 15.9155 0 0 1 0 -31.831" />
+
+                </svg>
+
+                <div
+                  class="usage-ring-label"
+                  id="usageRingLabel">
+                  0%
+                </div>
+
+              </div>
+
+              <div class="ring-caption">
+                Data
+              </div>
+
+            </div>
+
+            <!-- DAYS RING -->
+
+            <div class="ring-block">
+
+              <div class="usage-ring-wrap">
+
+                <svg
+                  viewBox="0 0 36 36"
+                  class="usage-ring">
+
+                  <path
+                    class="ring-bg"
+                    d="M18 2.0845
+                       a 15.9155 15.9155 0 0 1 0 31.831
+                       a 15.9155 15.9155 0 0 1 0 -31.831" />
+
+                  <path
+                    class="ring-fg"
+                    id="daysRingFg"
+                    stroke-dasharray="0,100"
+                    d="M18 2.0845
+                       a 15.9155 15.9155 0 0 1 0 31.831
+                       a 15.9155 15.9155 0 0 1 0 -31.831" />
+
+                </svg>
+
+                <div
+                  class="usage-ring-label"
+                  id="daysRingLabel">
+                  ∞
+                </div>
+
+              </div>
+
+              <div class="ring-caption">
+                Days
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ===================================================
+           DATA USAGE
+           =================================================== -->
+
+      <div
+        class="card"
+        id="usageCard">
+
+        <h2>
+          <span>
+            Data Usage
+          </span>
+        </h2>
+
+        <div class="usage-headline">
+
+          <div class="usage-headline-item">
+
+            <div
+              class="usage-headline-value"
+              id="usageMonthValue">
+              —
+            </div>
+
+            <div class="usage-headline-label">
+              This Month
+            </div>
+
+          </div>
+
+          <div class="usage-headline-item">
+
+            <div
+              class="usage-headline-value"
+              id="usageTotalValue">
+              —
+            </div>
+
+            <div class="usage-headline-label">
+              Total Usage
+            </div>
+
+          </div>
+
+        </div>
+
+        <div
+          class="usage-range-selector"
+          id="usageRangeSelector"
+          role="tablist"
+          aria-label="Usage chart time range">
+
+          <button
+            type="button"
+            class="usage-range-btn"
+            data-range="24h"
+            role="tab"
+            aria-selected="false">
+            Last 24 Hours
+          </button>
+
+          <button
+            type="button"
+            class="usage-range-btn"
+            data-range="7d"
+            role="tab"
+            aria-selected="false">
+            Last 7 Days
+          </button>
+
+          <button
+            type="button"
+            class="usage-range-btn"
+            data-range="month"
+            role="tab"
+            aria-selected="false">
+            Last Month
+          </button>
+
+        </div>
+
+        <div class="usage-summary">
+
+          <div class="usage-stat">
+
+            <div
+              class="usage-stat-value"
+              id="usageAverage">
+              —
+            </div>
+
+            <div
+              class="usage-stat-label"
+              id="usageAverageLabel">
+              Avg / Day
+            </div>
+
+          </div>
+
+          <div class="usage-stat">
+
+            <div
+              class="usage-stat-value"
+              id="usagePeak">
+              —
+            </div>
+
+            <div class="usage-stat-label">
+              Peak
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- LINE CHART -->
+
+        <div class="line-chart-wrap">
+
+          <div
+            class="line-chart"
+            id="lineChart">
+
+            <svg
+              id="usageLineSvg"
+              viewBox="0 0 1000 260"
+              preserveAspectRatio="none">
+
+              <defs>
+
+                <linearGradient
+                  id="usageLineGradient"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1">
+
+                  <stop
+                    offset="0%"
+                    stop-opacity="0.22"/>
+
+                  <stop
+                    offset="100%"
+                    stop-opacity="0"/>
+
+                </linearGradient>
+
+              </defs>
+
+              <g id="usageGrid"></g>
+
+              <path
+                id="usageAreaPath"
+                class="usage-area-path"
+                d="">
+              </path>
+
+              <path
+                id="usageLinePath"
+                class="usage-line-path"
+                d="">
+              </path>
+
+              <g id="usageLinePoints"></g>
+
+              <g id="usageLineLabels"></g>
+
+              <rect
+                id="usageChartHit"
+                class="usage-chart-hit"
+                x="0"
+                y="0"
+                width="1000"
+                height="260"
+                tabindex="0"
+                role="slider"
+                aria-label="Data usage chart. Use left and right arrow keys to inspect points.">
+              </rect>
+
+            </svg>
+
+            <div
+              class="usage-tooltip"
+              id="usageTooltip"
+              role="status"
+              aria-live="polite"
+              style="display:none;">
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="usage-chart-axis">
+
+          <span id="usageAxisStart">
+            —
+          </span>
+
+          <span id="usageAxisEnd">
+            —
+          </span>
+
+        </div>
+
+        <div
+          class="usage-peak"
+          id="usagePeakText">
+        </div>
+
+        <div
+          class="usage-empty"
+          id="usageEmpty"
+          style="display:none;">
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- =====================================================
+         RIGHT
+         ===================================================== -->
+
+    <div class="col col-side">
+
+      <!-- LINKS -->
+
+      <div class="card">
+
+        <h2>
+
+          <span
+            class="links-toggle"
+            id="linksToggle">
+
+            Links
+            <span id="linksChevron">
+              ▾
+            </span>
+
+          </span>
+
+          <button
+            class="btn btn-copy-all"
+            id="copyAllBtn"
+            aria-label="Copy all subscription links">
+
+            Copy All
+
+          </button>
+
+        </h2>
+
+        <ul
+          class="links"
+          id="linkList">
+        </ul>
+
+      </div>
+
+      <!-- APPS -->
+
+      <div
+        class="card"
+        id="appsCard"
+        style="display:none;">
+
+        <h2 id="appsHeading">
+          Apps
+        </h2>
+
+        <div id="appsList"></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+/* =========================================================
+   SUBSCRIPTION URL
+   ========================================================= */
+
+function subUrl(){
+
+  return window.location.origin +
+         window.location.pathname.replace(
+           /\/+$/,
+           ''
+         );
+
+}
+
+/* =========================================================
+   BYTE FORMAT
+   ========================================================= */
+
+function formatBytes(n){
+
+  if(
+    n == null ||
+    isNaN(n) ||
+    n === 0
+  ){
+
+    return '0 B';
+
+  }
+
+  const units = [
+    'B',
+    'KB',
+    'MB',
+    'GB',
+    'TB'
+  ];
+
+  let val =
+    Math.abs(n);
+
+  let i = 0;
+
+  while(
+    val >= 1024 &&
+    i < units.length - 1
+  ){
+
+    val /= 1024;
+    i++;
+
+  }
+
+  const decimals =
+    val >= 100
+      ? 0
+      : val >= 10
+        ? 1
+        : 2;
+
+  const sign =
+    n < 0
+      ? '-'
+      : '';
+
+  return sign +
+         val.toFixed(decimals) +
+         ' ' +
+         units[i];
+
+}
+
+/* =========================================================
+   TIMESTAMP
+   ========================================================= */
+
+function timestampMs(v){
+
+  if(
+    v == null ||
+    v === ''
+  ){
+
+    return null;
+
+  }
+
+  const n =
+    Number(v);
+
+  if(
+    isFinite(n) &&
+    String(v).trim() !== ''
+  ){
+
+    return (
+      n > 0 &&
+      n < 100000000000
+    )
+      ? n * 1000
+      : n;
+
+  }
+
+  const t =
+    new Date(v).getTime();
+
+  return isFinite(t)
+    ? t
+    : null;
+
+}
+
+/* =========================================================
+   EXPIRATION
+   ========================================================= */
+
+function formatExpire(v){
+
+  const ts =
+    timestampMs(v);
+
+  if(!ts){
+
+    return '∞';
+
+  }
+
+  return new Date(ts)
+    .toLocaleDateString(
+      'en-US',
+      {
+        year:'numeric',
+        month:'short',
+        day:'numeric'
+      }
+    );
+
+}
+
+/* =========================================================
+   DATA RING
+   ========================================================= */
+
+function updateUsageRing(
+  used,
+  limit
+){
+
+  const fg =
+    document.getElementById(
+      'usageRingFg'
+    );
+
+  const label =
+    document.getElementById(
+      'usageRingLabel'
+    );
+
+  fg.classList.remove(
+    'ring-warn',
+    'ring-danger',
+    'ring-inf'
+  );
+
+  if(!limit){
+
+    fg.setAttribute(
+      'stroke-dasharray',
+      '100,100'
+    );
+
+    fg.classList.add(
+      'ring-inf'
+    );
+
+    label.textContent =
+      '∞';
+
+    return;
+
+  }
+
+  const pct =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        (
+          used /
+          limit
+        ) *
+        100
+      )
+    );
+
+  fg.setAttribute(
+    'stroke-dasharray',
+    pct.toFixed(1) +
+    ',100'
+  );
+
+  if(pct >= 95){
+
+    fg.classList.add(
+      'ring-danger'
+    );
+
+  }else if(pct >= 80){
+
+    fg.classList.add(
+      'ring-warn'
+    );
+
+  }
+
+  label.textContent =
+    Math.round(pct) +
+    '%';
+
+}
+
+/* =========================================================
+   DAYS HELPERS
+   ========================================================= */
+
+function getSubscriptionStartMs(user){
+
+  if(
+    !user ||
+    typeof user !== 'object'
+  ){
+
+    return null;
+
+  }
+
+  const keys = [
+
+    'subscription_start',
+    'subscriptionStart',
+
+    'start_date',
+    'startDate',
+
+    'started_at',
+    'startedAt',
+
+    'created_at',
+    'createdAt',
+
+    'created'
+
+  ];
+
+  for(
+    const key of keys
+  ){
+
+    if(
+      user[key] != null
+    ){
+
+      const ts =
+        timestampMs(
+          user[key]
+        );
+
+      if(ts){
+
+        return ts;
+
+      }
+
+    }
+
+  }
+
+  return null;
+
+}
+
+function getSubscriptionDurationDays(user){
+
+  if(
+    !user ||
+    typeof user !== 'object'
+  ){
+
+    return null;
+
+  }
+
+  const durationKeys = [
+
+    'duration_days',
+    'durationDays',
+
+    'subscription_days',
+    'subscriptionDays',
+
+    'validity_days',
+    'validityDays',
+
+    'expire_days',
+    'expireDays'
+
+  ];
+
+  for(
+    const key of durationKeys
+  ){
+
+    const value =
+      Number(
+        user[key]
+      );
+
+    if(
+      isFinite(value) &&
+      value > 0
+    ){
+
+      return Math.ceil(value);
+
+    }
+
+  }
+
+  const start =
+    getSubscriptionStartMs(
+      user
+    );
+
+  const expire =
+    timestampMs(
+      user.expire
+    );
+
+  if(
+    start &&
+    expire &&
+    expire > start
+  ){
+
+    return Math.max(
+      1,
+      Math.ceil(
+        (
+          expire -
+          start
+        ) /
+        86400000
+      )
+    );
+
+  }
+
+  return null;
+
+}
+
+/* =========================================================
+   DAYS RING
+   ========================================================= */
+
+function updateDaysRing(
+  expireValue
+){
+
+  const fg =
+    document.getElementById(
+      'daysRingFg'
+    );
+
+  const label =
+    document.getElementById(
+      'daysRingLabel'
+    );
+
+  fg.classList.remove(
+    'ring-warn',
+    'ring-danger',
+    'ring-inf'
+  );
+
+  const expireTs =
+    timestampMs(
+      expireValue
+    );
+
+  if(!expireTs){
+
+    fg.setAttribute(
+      'stroke-dasharray',
+      '100,100'
+    );
+
+    fg.classList.add(
+      'ring-inf'
+    );
+
+    label.textContent =
+      '∞';
+
+    return;
+
+  }
+
+  const user =
+    window.__pgUser || {};
+
+  let durationDays =
+    getSubscriptionDurationDays(
+      user
+    );
+
+  const daysLeft =
+    Math.max(
+      0,
+      Math.ceil(
+        (
+          expireTs -
+          Date.now()
+        ) /
+        86400000
+      )
+    );
+
+  /*
+   * If we know the actual subscription
+   * duration, use it.
+   */
+  if(
+    durationDays &&
+    durationDays > 0
+  ){
+
+    const pct =
+      Math.max(
+        0,
+        Math.min(
+          100,
+          (
+            daysLeft /
+            durationDays
+          ) *
+          100
+        )
+      );
+
+    fg.setAttribute(
+      'stroke-dasharray',
+      pct.toFixed(1) +
+      ',100'
+    );
+
+  }else{
+
+    /*
+     * Fallback:
+     * keep a sensible ring instead of
+     * permanently assuming 30 days.
+     */
+    fg.setAttribute(
+      'stroke-dasharray',
+      daysLeft > 0
+        ? '100,100'
+        : '0,100'
+    );
+
+  }
+
+  if(daysLeft <= 3){
+
+    fg.classList.add(
+      'ring-danger'
+    );
+
+  }else if(daysLeft <= 7){
+
+    fg.classList.add(
+      'ring-warn'
+    );
+
+  }
+
+  label.textContent =
+    daysLeft +
+    'd';
+
+}
+
+/* =========================================================
+   USER
+   ========================================================= */
+
+function renderUser(user){
+
+  document.getElementById(
+    'unameOut'
+  ).textContent =
+    user.username ||
+    '—';
+
+  const status =
+    (
+      user.status ||
+      'active'
+    ).toLowerCase();
+
+  const badge =
+    document.getElementById(
+      'statusBadge'
+    );
+
+  badge.textContent =
+    status;
+
+  badge.className =
+    'badge' +
+    (
+      status === 'expired' ||
+      status === 'limited'
+        ? ' expired'
+        : status === 'disabled'
+          ? ' disabled'
+          : ''
+    );
+
+  const used =
+    Number(
+      user.used_traffic
+    ) || 0;
+
+  const limit =
+    Number(
+      user.data_limit
+    ) || 0;
+
+  document.getElementById(
+    'usedOut'
+  ).textContent =
+    formatBytes(
+      used
+    );
+
+  document.getElementById(
+    'limitOut'
+  ).textContent =
+    !limit
+      ? '∞'
+      : formatBytes(
+          limit
+        );
+
+  document.getElementById(
+    'expireOut'
+  ).textContent =
+    formatExpire(
+      user.expire
+    );
+
+  updateUsageRing(
+    used,
+    limit
+  );
+
+  updateDaysRing(
+    user.expire
+  );
+
+  setUsageTotalsFromUser(
+    user
+  );
+
+}
+
+/* =========================================================
+   NOTICE / ANNOUNCEMENT
+   ========================================================= */
+
+const NOTICE_KEYS = [
+
+  'note',
+  'notice',
+  'announcement',
+  'sub_note',
+  'subscription_note',
+  'message'
+
+];
+
+function escapeHtml(s){
+
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+}
+
+function escapeAttr(s){
+
+  return escapeHtml(s)
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+}
+
+function decodeBase64Utf8(value){
+
+  try{
+
+    let normalized =
+      String(value || '')
+        .replace(/-/g, '+')
+        .replace(/_/g, '/')
+        .replace(/\s/g, '');
+
+    while(
+      normalized.length % 4
+    ){
+
+      normalized += '=';
+
+    }
+
+    const binary =
+      atob(normalized);
+
+    const encoded =
+      Array.prototype.map.call(
+        binary,
+        ch =>
+          '%' +
+          ('00' + ch.charCodeAt(0).toString(16)).slice(-2)
+      ).join('');
+
+    return decodeURIComponent(encoded);
+
+  }catch(e){
+
+    return '';
+
+  }
+
+}
+
+function decodeAnnounce(raw){
+
+  if(!raw){
+
+    return '';
+
+  }
+
+  if(
+    raw.indexOf('base64:') === 0
+  ){
+
+    return decodeBase64Utf8(
+      raw.slice(7).trim()
+    ) || raw.slice(7);
+
+  }
+
+  try{
+
+    return decodeURIComponent(raw);
+
+  }catch(e){
+
+    return raw;
+
+  }
+
+}
+
+function renderNotice(
+  user,
+  headers
+){
+
+  const el =
+    document.getElementById(
+      'noticeBanner'
+    );
+
+  let msg = '';
+
+  let url = '';
+
+  if(
+    headers &&
+    headers.announce
+  ){
+
+    msg =
+      decodeAnnounce(
+        headers.announce
+      );
+
+  }
+
+  if(
+    headers &&
+    headers['announce-url']
+  ){
+
+    url =
+      headers['announce-url'];
+
+  }
+
+  if(!msg){
+
+    for(
+      const k of NOTICE_KEYS
+    ){
+
+      if(
+        user &&
+        typeof user[k] ===
+          'string' &&
+        user[k].trim()
+      ){
+
+        msg =
+          user[k].trim();
+
+        break;
+
+      }
+
+    }
+
+  }
+
+  if(
+    !msg &&
+    !url
+  ){
+
+    el.innerHTML =
+      '';
+
+    el.style.display =
+      'none';
+
+    return;
+
+  }
+
+  let html =
+    msg
+      ? '<span>' +
+        escapeHtml(msg) +
+        '</span>'
+      : '';
+
+  if(url){
+
+    html +=
+      (
+        msg
+          ? ' '
+          : ''
+      ) +
+      '<a href="' +
+      escapeAttr(url) +
+      '" target="_blank" rel="noopener noreferrer" style="color:inherit;font-weight:700;text-decoration:underline;">' +
+      'Details' +
+      '</a>';
+
+  }
+
+  el.innerHTML =
+    html;
+
+  el.style.display =
+    '';
+
+}
+
+/* =========================================================
+   LINK TYPE
+   ========================================================= */
+
+function linkType(raw){
+
+  const low =
+    raw.toLowerCase();
+
+  if(
+    low.indexOf('wireguard://') === 0
+  ){
+
+    return 'wireguard';
+
+  }
+
+  if(
+    low.indexOf('vless://') === 0
+  ){
+
+    return 'vless';
+
+  }
+
+  if(
+    low.indexOf('vmess://') === 0
+  ){
+
+    return 'vmess';
+
+  }
+
+  if(
+    low.indexOf('trojan://') === 0
+  ){
+
+    return 'trojan';
+
+  }
+
+  if(
+    low.indexOf('hysteria') === 0
+  ){
+
+    return 'hysteria';
+
+  }
+
+  if(
+    low.indexOf('ss://') === 0 ||
+    low.indexOf('shadowsocks') === 0
+  ){
+
+    return 'shadowsocks';
+
+  }
+
+  return 'proxy';
+
+}
+
+function safeDecode(value){
+
+  if(!value){
+
+    return '';
+
+  }
+
+  try{
+
+    return decodeURIComponent(
+      String(value).replace(/\+/g, '%20')
+    );
+
+  }catch(e){
+
+    return String(value);
+
+  }
+
+}
+
+/* =========================================================
+   WIREGUARD CONFIG DOWNLOAD
+   ========================================================= */
+
+function decodeUrlValue(value){
+
+  try{
+
+    return decodeURIComponent(
+      String(value || '')
+    );
+
+  }catch(e){
+
+    return String(value || '');
+
+  }
+
+}
+
+function normalizeWireGuardKey(value){
+
+  return String(value || '')
+    .replace(/\s/g, '+');
+
+}
+
+function decodeWireGuardPayload(raw){
+
+  let payload =
+    String(raw || '')
+      .replace(/^wireguard:\/\//i, '')
+      .split('#')[0]
+      .split('?')[0]
+      .replace(/^\/+/, '');
+
+  payload =
+    decodeUrlValue(payload);
+
+  if(
+    payload.indexOf('[Interface]') >= 0
+  ){
+
+    return payload;
+
+  }
+
+  const decoded =
+    decodeBase64Utf8(payload);
+
+  if(
+    decoded &&
+    decoded.indexOf('[Interface]') >= 0
+  ){
+
+    return decoded;
+
+  }
+
+  return '';
+
+}
+
+function firstParam(
+  params,
+  keys
+){
+
+  for(
+    const k of keys
+  ){
+
+    const values =
+      params.getAll(k)
+        .filter(Boolean);
+
+    if(values.length){
+
+      return values.join(', ');
+
+    }
+
+  }
+
+  return '';
+
+}
+
+function wireGuardConf(raw){
+
+  raw =
+    String(raw || '').trim();
+
+  if(!raw){
+
+    return '';
+
+  }
+
+  if(
+    /^\[Interface\]/i.test(raw)
+  ){
+
+    return raw;
+
+  }
+
+  const decoded =
+    decodeWireGuardPayload(raw);
+
+  if(decoded){
+
+    return decoded;
+
+  }
+
+  try{
+
+    const url =
+      new URL(raw);
+
+    const params =
+      url.searchParams;
+
+    const privateKey =
+      normalizeWireGuardKey(
+        decodeUrlValue(
+          url.username ||
+          firstParam(
+            params,
+            ['privatekey', 'privateKey', 'private_key']
+          )
+        )
+      );
+
+    const publicKey =
+      normalizeWireGuardKey(
+        firstParam(
+          params,
+          ['publickey', 'publicKey', 'public_key', 'peerpublickey', 'peerPublicKey', 'peer_public_key']
+        )
+      );
+
+    const endpoint =
+      firstParam(params, ['endpoint']) ||
+      url.host;
+
+    const address =
+      firstParam(
+        params,
+        ['address', 'addresses', 'localaddress', 'localAddress', 'local_address', 'ip']
+      );
+
+    const dns =
+      firstParam(
+        params,
+        ['dns', 'dnsserver', 'dnsServer', 'dns_server']
+      );
+
+    const mtu =
+      firstParam(params, ['mtu']);
+
+    const presharedKey =
+      normalizeWireGuardKey(
+        firstParam(
+          params,
+          ['presharedkey', 'preSharedKey', 'preshared_key', 'psk']
+        )
+      );
+
+    const allowedIps =
+      firstParam(
+        params,
+        ['allowedips', 'allowedIPs', 'allowed_ips']
+      ) || '0.0.0.0/0, ::/0';
+
+    const keepalive =
+      firstParam(
+        params,
+        ['persistentkeepalive', 'persistentKeepalive', 'persistent_keepalive', 'keepalive']
+      ) || '25';
+
+    const lines =
+      ['[Interface]'];
+
+    if(privateKey){
+      lines.push('PrivateKey = ' + privateKey);
+    }
+
+    if(address){
+      lines.push('Address = ' + address);
+    }
+
+    if(dns){
+      lines.push('DNS = ' + dns);
+    }
+
+    if(mtu){
+      lines.push('MTU = ' + mtu);
+    }
+
+    lines.push('', '[Peer]');
+
+    if(publicKey){
+      lines.push('PublicKey = ' + publicKey);
+    }
+
+    if(presharedKey){
+      lines.push('PresharedKey = ' + presharedKey);
+    }
+
+    if(allowedIps){
+      lines.push('AllowedIPs = ' + allowedIps);
+    }
+
+    if(endpoint){
+      lines.push('Endpoint = ' + endpoint);
+    }
+
+    if(keepalive){
+      lines.push('PersistentKeepalive = ' + keepalive);
+    }
+
+    return lines.join('\n') + '\n';
+
+  }catch(e){
+
+    return raw;
+
+  }
+
+}
+
+function wireGuardFileName(title){
+
+  let base =
+    String(title || 'wireguard')
+      .trim()
+      .replace(/[\\/:*?"<>|]+/g, '-')
+      .replace(/\s+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+  if(!base){
+
+    base = 'wireguard';
+
+  }
+
+  if(
+    !/\.conf$/i.test(base)
+  ){
+
+    base += '.conf';
+
+  }
+
+  return base;
+
+}
+
+function downloadTextFile(
+  text,
+  filename
+){
+
+  const blob =
+    new Blob(
+      [text],
+      { type: 'application/x-wireguard-profile;charset=utf-8' }
+    );
+
+  const url =
+    URL.createObjectURL(blob);
+
+  const a =
+    document.createElement('a');
+
+  a.href = url;
+
+  a.download = filename;
+
+  document.body.appendChild(a);
+
+  a.click();
+
+  document.body.removeChild(a);
+
+  setTimeout(
+    () => URL.revokeObjectURL(url),
+    1000
+  );
+
+}
+
+function downloadWireGuardConfig(
+  raw,
+  title
+){
+
+  downloadTextFile(
+    wireGuardConf(raw),
+    wireGuardFileName(title)
+  );
+
+}
+
+function linkFileTitle(
+  raw,
+  idx
+){
+
+  const hashIdx =
+    raw.indexOf('#');
+
+  if(hashIdx >= 0){
+
+    const name =
+      safeDecode(
+        raw.slice(hashIdx + 1)
+      ).trim();
+
+    if(name){
+
+      return name;
+
+    }
+
+  }
+
+  return 'wireguard-' + (idx + 1);
+
+}
+
+/* =========================================================
+   RENDER LINKS
+   ========================================================= */
+
+let allLinks = [];
+
+function renderLinks(
+  links
+){
+
+  allLinks =
+    links;
+
+  const list =
+    document.getElementById(
+      'linkList'
+    );
+
+  closeAnyQR();
+
+  list.innerHTML =
+    links.map(
+      (url,i) => {
+
+        const isWireGuard =
+          linkType(url) === 'wireguard';
+
+        return `
+
+        <li data-row="${i}">
+
+          <span class="link-text">
+            ${escapeHtml(url)}
+          </span>
+
+          <button
+            class="btn"
+            data-i="${i}"
+            data-act="copy"
+            aria-label="Copy subscription link">
+
+            Copy
+
+          </button>
+
+          <button
+            class="btn"
+            data-i="${i}"
+            data-act="qr">
+
+            QR Code
+
+          </button>
+
+          ${
+            isWireGuard
+              ? `
+                <button
+                  class="btn"
+                  data-i="${i}"
+                  data-act="download">
+
+                  Download
+
+                </button>
+              `
+              : ''
+          }
+
+        </li>
+
+        `;
+
+      }
+    ).join('');
+
+  list
+    .querySelectorAll(
+      '[data-act="copy"]'
+    )
+    .forEach(
+      btn => {
+
+        btn.addEventListener(
+          'click',
+          () =>
+            handleCopy(
+              links[
+                btn.dataset.i
+              ],
+              btn
+            )
+        );
+
+      }
+    );
+
+  list
+    .querySelectorAll(
+      '[data-act="qr"]'
+    )
+    .forEach(
+      btn => {
+
+        btn.addEventListener(
+          'click',
+          () => {
+
+            const idx =
+              Number(
+                btn.dataset.i
+              );
+
+            if(
+              activeQRIndex === idx
+            ){
+
+              closeAnyQR();
+
+            }else{
+
+              showInlineQR(
+                links[idx],
+                idx
+              );
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+  list
+    .querySelectorAll(
+      '[data-act="download"]'
+    )
+    .forEach(
+      btn => {
+
+        btn.addEventListener(
+          'click',
+          () => {
+
+            const idx =
+              Number(
+                btn.dataset.i
+              );
+
+            const raw =
+              links[idx];
+
+            downloadWireGuardConfig(
+              raw,
+              linkFileTitle(raw, idx)
+            );
+
+          }
+        );
+
+      }
+    );
+
+  const copyAllBtn =
+    document.getElementById(
+      'copyAllBtn'
+    );
+
+  if(copyAllBtn){
+
+    copyAllBtn.onclick =
+      () =>
+        handleCopy(
+          allLinks.join(
+            '\n'
+          ),
+          copyAllBtn
+        );
+
+  }
+
+}
+
+/* =========================================================
+   COPY
+   ========================================================= */
+
+function fallbackCopyExec(
+  text
+){
+
+  const ta =
+    document.createElement(
+      'textarea'
+    );
+
+  ta.value =
+    text;
+
+  ta.setAttribute(
+    'readonly',
+    ''
+  );
+
+  ta.style.position =
+    'fixed';
+
+  ta.style.top =
+    '-9999px';
+
+  ta.style.left =
+    '-9999px';
+
+  ta.style.opacity =
+    '0';
+
+  document.body.appendChild(
+    ta
+  );
+
+  ta.focus({
+    preventScroll:true
+  });
+
+  ta.select();
+
+  ta.setSelectionRange(
+    0,
+    ta.value.length
+  );
+
+  let ok = false;
+
+  try{
+
+    ok =
+      document.execCommand(
+        'copy'
+      );
+
+  }catch(e){
+
+    ok = false;
+
+  }
+
+  document.body.removeChild(
+    ta
+  );
+
+  return ok;
+
+}
+
+function showCopyFeedback(
+  btn,
+  success
+){
+
+  if(!btn){
+
+    return;
+
+  }
+
+  if(btn._copyResetTimer){
+
+    clearTimeout(
+      btn._copyResetTimer
+    );
+
+    btn._copyResetTimer =
+      null;
+
+  }
+
+  if(
+    btn._copyOriginalLabel ===
+    undefined
+  ){
+
+    btn._copyOriginalLabel =
+      btn.textContent.trim();
+
+  }
+
+  btn.classList.remove(
+    'copied',
+    'copy-failed'
+  );
+
+  if(success){
+
+    btn.classList.add(
+      'copied'
+    );
+
+    btn.textContent =
+      'Copied';
+
+    btn.setAttribute(
+      'aria-label',
+      'Subscription link copied'
+    );
+
+  }else{
+
+    btn.classList.add(
+      'copy-failed'
+    );
+
+    btn.textContent =
+      'Copy failed';
+
+    btn.setAttribute(
+      'aria-label',
+      'Copy failed, please try again'
+    );
+
+  }
+
+  btn._copyResetTimer =
+    setTimeout(
+      () => {
+
+        btn.classList.remove(
+          'copied',
+          'copy-failed'
+        );
+
+        btn.textContent =
+          btn._copyOriginalLabel;
+
+        btn.setAttribute(
+          'aria-label',
+          'Copy subscription link'
+        );
+
+        btn._copyResetTimer =
+          null;
+
+      },
+      1300
+    );
+
+}
+
+/* Single source of truth for every Copy button on the page.
+   ROOT CAUSE of the "needs two taps" bug: this used to call the
+   async navigator.clipboard.writeText() FIRST and await it before
+   falling back to the synchronous execCommand path. Crossing that
+   await can silently drop the browser's "user activation" flag in
+   iOS Safari and many in-app/WebView browsers, so execCommand then
+   fails too on the first tap — it only succeeds on a second tap
+   once the page already has focus. Running the synchronous method
+   first (it never leaves the original tap's call stack) fixes this
+   for every Copy button at once, since they all funnel through
+   this one function. */
+
+async function handleCopy(
+  text,
+  btn
+){
+
+  let success =
+    fallbackCopyExec(
+      text
+    );
+
+  if(
+    !success &&
+    navigator.clipboard &&
+    navigator.clipboard.writeText
+  ){
+
+    try{
+
+      await navigator.clipboard.writeText(
+        text
+      );
+
+      success = true;
+
+    }catch(e){
+
+      success = false;
+
+    }
+
+  }
+
+  showCopyFeedback(
+    btn,
+    success
+  );
+
+}
+
+/* =========================================================
+   QR (INLINE, INSERTED RIGHT AFTER THE TAPPED ROW)
+   ========================================================= */
+
+let activeQRIndex = null;
+
+function closeAnyQR(){
+
+  document
+    .querySelectorAll(
+      'li.qr-row'
+    )
+    .forEach(
+      el =>
+        el.remove()
+    );
+
+  document
+    .querySelectorAll(
+      '#linkList li.active-qr'
+    )
+    .forEach(
+      li =>
+        li.classList.remove(
+          'active-qr'
+        )
+    );
+
+  activeQRIndex =
+    null;
+
+}
+
+function showInlineQR(
+  url,
+  idx
+){
+
+  const list =
+    document.getElementById(
+      'linkList'
+    );
+
+  const targetLi =
+    list.querySelector(
+      'li[data-row="' + idx + '"]'
+    );
+
+  closeAnyQR();
+
+  if(!targetLi){
+
+    return;
+
+  }
+
+  targetLi.classList.add(
+    'active-qr'
+  );
+
+  const qrLi =
+    document.createElement(
+      'li'
+    );
+
+  qrLi.className =
+    'qr-row';
+
+  qrLi.innerHTML =
+    `
+    <div class="qr-inline-box">
+
+      <button
+        class="qr-inline-close"
+        type="button">
+        ✕
+      </button>
+
+      <div id="qrInlineBox"></div>
+
+      <div class="qr-inline-label">
+        ${linkType(url).toUpperCase()}
+      </div>
+
+    </div>
+    `;
+
+  targetLi.insertAdjacentElement(
+    'afterend',
+    qrLi
+  );
+
+  const box =
+    qrLi.querySelector(
+      '#qrInlineBox'
+    );
+
+  if(window.QRCode){
+
+    try{
+
+      new QRCode(
+        box,
+        {
+          text:url,
+          width:220,
+          height:220,
+          colorDark:"#111111",
+          colorLight:"#ffffff",
+          correctLevel:
+            QRCode.CorrectLevel.L
+        }
+      );
+
+    }catch(e){
+
+      box.innerHTML =
+        '<div style="font-size:7px;color:#a33;text-align:center;">Link too long for QR code. Use Copy instead.</div>';
+
+    }
+
+  }else{
+
+    box.textContent =
+      '…';
+
+  }
+
+  qrLi
+    .querySelector(
+      '.qr-inline-close'
+    )
+    .addEventListener(
+      'click',
+      closeAnyQR
+    );
+
+  activeQRIndex =
+    idx;
+
+}
+
+/* =========================================================
+   LINKS TOGGLE
+   ========================================================= */
+
+function toggleLinks(){
+
+  const list =
+    document.getElementById(
+      'linkList'
+    );
+
+  const chevron =
+    document.getElementById(
+      'linksChevron'
+    );
+
+  const collapsed =
+    list.style.display ===
+    'none';
+
+  list.style.display =
+    collapsed
+      ? ''
+      : 'none';
+
+  chevron.classList.toggle(
+    'collapsed',
+    !collapsed
+  );
+
+  if(!collapsed){
+
+    closeAnyQR();
+
+  }
+
+}
+
+document
+  .getElementById(
+    'linksToggle'
+  )
+  .addEventListener(
+    'click',
+    toggleLinks
+  );
+
+/* =========================================================
+   USAGE CHART
+   ========================================================= */
+
+let usageRequestSeq = 0;
+
+/* =========================================================
+   CURRENT MONTH RANGE
+   ========================================================= */
+
+function rangeToDates(){
+
+  const now =
+    new Date();
+
+  const year =
+    now.getFullYear();
+
+  const month =
+    now.getMonth();
+
+  const start =
+    new Date(
+      year,
+      month,
+      1,
+      0,
+      0,
+      0,
+      0
+    );
+
+  const end =
+    new Date(
+      now
+    );
+
+  const days =
+    new Date(
+      year,
+      month + 1,
+      0
+    ).getDate();
+
+  return {
+    start,
+    end,
+    days
+  };
+
+}
+
+/* =========================================================
+   CHART RANGE OPTIONS (SELECTOR)
+   ========================================================= */
+
+const DEFAULT_USAGE_RANGE = '7d';
+
+function getChartRangeBounds(
+  rangeId
+){
+
+  const now =
+    new Date();
+
+  if(rangeId === '24h'){
+
+    const end =
+      new Date(now);
+
+    const start =
+      new Date(
+        end.getTime() -
+        24 * 60 * 60 * 1000
+      );
+
+    return {
+      start,
+      end,
+      unit:'hour'
+    };
+
+  }
+
+  if(rangeId === 'month'){
+
+    /* Previous calendar month, full boundaries */
+
+    const year =
+      now.getFullYear();
+
+    const month =
+      now.getMonth();
+
+    const start =
+      new Date(
+        year,
+        month - 1,
+        1,
+        0,
+        0,
+        0,
+        0
+      );
+
+    const end =
+      new Date(
+        year,
+        month,
+        0,
+        23,
+        59,
+        59,
+        999
+      );
+
+    return {
+      start,
+      end,
+      unit:'day'
+    };
+
+  }
+
+  /* Default: last 7 days (calendar days, inclusive of today) */
+
+  const start =
+    new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - 6,
+      0,
+      0,
+      0,
+      0
+    );
+
+  const end =
+    new Date(now);
+
+  return {
+    start,
+    end,
+    unit:'day'
+  };
+
+}
+
+/* =========================================================
+   USAGE FIELD NAMES
+   ========================================================= */
+
+const USAGE_DATE_KEYS = [
+
+  'period_start',
+  'date',
+  'day',
+  'created_at',
+  'createdAt',
+  'timestamp',
+  'time',
+  'start',
+  'period'
+
+];
+
+const USAGE_VALUE_KEYS = [
+
+  'total_traffic',
+  'used_traffic',
+  'usedTraffic',
+  'traffic',
+  'value',
+  'bytes',
+  'total'
+
+];
+
+/* =========================================================
+   USAGE VALUE
+   ========================================================= */
+
+function usageValueFrom(
+  obj
+){
+
+  if(
+    !obj ||
+    typeof obj !==
+      'object'
+  ){
+
+    return null;
+
+  }
+
+  for(
+    const k of USAGE_VALUE_KEYS
+  ){
+
+    if(
+      obj[k] != null &&
+      !isNaN(
+        Number(
+          obj[k]
+        )
+      )
+    ){
+
+      return Number(
+        obj[k]
+      );
+
+    }
+
+  }
+
+  if(
+    obj.uplink != null ||
+    obj.downlink != null
+  ){
+
+    return (
+      Number(
+        obj.uplink
+      ) || 0
+    ) +
+    (
+      Number(
+        obj.downlink
+      ) || 0
+    );
+
+  }
+
+  if(
+    obj.sent_traffic != null ||
+    obj.received_traffic != null
+  ){
+
+    return (
+      Number(
+        obj.sent_traffic
+      ) || 0
+    ) +
+    (
+      Number(
+        obj.received_traffic
+      ) || 0
+    );
+
+  }
+
+  return null;
+
+}
+
+/* =========================================================
+   USAGE DATE
+   ========================================================= */
+
+function usageDateFrom(
+  obj
+){
+
+  if(
+    !obj ||
+    typeof obj !==
+      'object'
+  ){
+
+    return null;
+
+  }
+
+  for(
+    const k of USAGE_DATE_KEYS
+  ){
+
+    if(
+      obj[k] != null
+    ){
+
+      const ms =
+        timestampMs(
+          obj[k]
+        );
+
+      if(ms){
+
+        return ms;
+
+      }
+
+    }
+
+  }
+
+  return null;
+
+}
+
+/* =========================================================
+   FIND USAGE LIST
+   ========================================================= */
+
+function findUsageList(
+  data
+){
+
+  if(
+    Array.isArray(data)
+  ){
+
+    return data;
+
+  }
+
+  if(
+    !data ||
+    typeof data !==
+      'object'
+  ){
+
+    return [];
+
+  }
+
+  const KNOWN_KEYS = [
+
+    'usages',
+    'node_usages',
+    'nodes',
+    'data',
+    'items',
+    'records',
+    'results'
+
+  ];
+
+  for(
+    const k of KNOWN_KEYS
+  ){
+
+    if(
+      Array.isArray(
+        data[k]
+      )
+    ){
+
+      return data[k];
+
+    }
+
+  }
+
+  for(
+    const k of Object.keys(
+      data
+    )
+  ){
+
+    if(
+      Array.isArray(
+        data[k]
+      )
+    ){
+
+      return data[k];
+
+    }
+
+  }
+
+  return [];
+
+}
+
+/* =========================================================
+   EXTRACT TRAFFIC ENTRIES
+   ========================================================= */
+
+function extractTrafficEntries(
+  data
+){
+
+  const entries = [];
+
+  function walk(
+    node
+  ){
+
+    if(
+      Array.isArray(node)
+    ){
+
+      node.forEach(
+        walk
+      );
+
+      return;
+
+    }
+
+    if(
+      !node ||
+      typeof node !==
+        'object'
+    ){
+
+      return;
+
+    }
+
+    const d =
+      usageDateFrom(
+        node
+      );
+
+    const v =
+      usageValueFrom(
+        node
+      );
+
+    if(
+      d != null &&
+      v != null
+    ){
+
+      entries.push({
+        dateMs:d,
+        used:v
+      });
+
+    }
+
+    Object.keys(
+      node
+    ).forEach(
+      k => {
+
+        const val =
+          node[k];
+
+        if(
+          Array.isArray(val) ||
+          (
+            val &&
+            typeof val ===
+              'object'
+          )
+        ){
+
+          walk(
+            val
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+  walk(
+    data
+  );
+
+  return entries;
+
+}
+
+/* =========================================================
+   TOTAL
+   ========================================================= */
+
+function computeUsageTotal(
+  data,
+  entries
+){
+
+  if(
+    entries &&
+    entries.length
+  ){
+
+    return entries.reduce(
+      (
+        s,
+        e
+      ) =>
+        s +
+        (
+          e.used ||
+          0
+        ),
+      0
+    );
+
+  }
+
+  const list =
+    findUsageList(
+      data
+    );
+
+  if(list.length){
+
+    return list.reduce(
+      (
+        s,
+        item
+      ) =>
+        s +
+        (
+          usageValueFrom(
+            item
+          ) ||
+          0
+        ),
+      0
+    );
+
+  }
+
+  return (
+    usageValueFrom(
+      data
+    ) ||
+    0
+  );
+
+}
+
+/* =========================================================
+   GROUP BY DAY
+   ========================================================= */
+
+function bucketEntries(
+  entries,
+  start,
+  end,
+  unit
+){
+
+  unit =
+    unit ||
+    'day';
+
+  const stepMs =
+    unit === 'hour'
+      ? 3600000
+      : 86400000;
+
+  function alignToBucket(
+    d
+  ){
+
+    const aligned =
+      new Date(
+        d
+      );
+
+    if(unit === 'hour'){
+
+      aligned.setMinutes(
+        0,
+        0,
+        0
+      );
+
+    }else{
+
+      aligned.setHours(
+        0,
+        0,
+        0,
+        0
+      );
+
+    }
+
+    return aligned;
+
+  }
+
+  const buckets =
+    new Map();
+
+  const first =
+    alignToBucket(
+      start
+    );
+
+  const last =
+    alignToBucket(
+      end
+    );
+
+  let cursor =
+    new Date(
+      first
+    );
+
+  while(
+    cursor.getTime() <=
+    last.getTime()
+  ){
+
+    buckets.set(
+      cursor.getTime(),
+      0
+    );
+
+    cursor =
+      alignToBucket(
+        new Date(
+          cursor.getTime() +
+          stepMs
+        )
+      );
+
+  }
+
+  entries.forEach(
+    e => {
+
+      if(
+        e.dateMs <
+          start.getTime() ||
+        e.dateMs >
+          end.getTime()
+      ){
+
+        return;
+
+      }
+
+      const key =
+        alignToBucket(
+          new Date(
+            e.dateMs
+          )
+        ).getTime();
+
+      if(
+        buckets.has(key)
+      ){
+
+        buckets.set(
+          key,
+          (
+            buckets.get(key) ||
+            0
+          ) +
+          (
+            e.used || 0
+          )
+        );
+
+      }
+
+    }
+  );
+
+  return Array
+    .from(
+      buckets.entries()
+    )
+    .sort(
+      (
+        a,
+        b
+      ) =>
+        a[0] -
+        b[0]
+    )
+    .map(
+      (
+        [
+          ms,
+          used
+        ]
+      ) => ({
+        ms,
+        used
+      })
+    );
+
+}
+
+/* =========================================================
+   DATE FORMAT
+   ========================================================= */
+
+function formatDayOfMonthLabel(
+  ms
+){
+
+  const d =
+    new Date(
+      ms
+    );
+
+  return String(
+    d.getDate()
+  ).padStart(
+    2,
+    '0'
+  );
+
+}
+
+function formatWeekdayLabel(
+  ms
+){
+
+  return new Date(
+    ms
+  ).toLocaleDateString(
+    'en-US',
+    {
+      weekday:'short'
+    }
+  );
+
+}
+
+function formatHourLabel(
+  ms
+){
+
+  const d =
+    new Date(
+      ms
+    );
+
+  let h =
+    d.getHours();
+
+  const suffix =
+    h >= 12
+      ? 'p'
+      : 'a';
+
+  h =
+    h % 12;
+
+  if(h === 0){
+
+    h = 12;
+
+  }
+
+  return h +
+    suffix;
+
+}
+
+function formatAxisLabel(
+  ms,
+  unit,
+  rangeId
+){
+
+  if(unit === 'hour'){
+
+    return formatHourLabel(
+      ms
+    );
+
+  }
+
+  if(rangeId === '7d'){
+
+    return formatWeekdayLabel(
+      ms
+    );
+
+  }
+
+  return formatDayOfMonthLabel(
+    ms
+  );
+
+}
+
+function formatFullDate(
+  ms
+){
+
+  return new Date(
+    ms
+  ).toLocaleDateString(
+    'en-US',
+    {
+      year:'numeric',
+      month:'short',
+      day:'numeric'
+    }
+  );
+
+}
+
+function formatFullDateTime(
+  ms,
+  unit
+){
+
+  if(unit === 'hour'){
+
+    return new Date(
+      ms
+    ).toLocaleString(
+      'en-US',
+      {
+        month:'short',
+        day:'numeric',
+        hour:'numeric',
+        minute:'2-digit'
+      }
+    );
+
+  }
+
+  return formatFullDate(
+    ms
+  );
+
+}
+
+function formatAxisRangeLabel(
+  ms,
+  unit
+){
+
+  if(unit === 'hour'){
+
+    return formatFullDateTime(
+      ms,
+      unit
+    );
+
+  }
+
+  return formatFullDate(
+    ms
+  ).replace(
+    /,?\s+\d{4}$/,
+    ''
+  );
+
+}
+
+/* =========================================================
+   USAGE STATS (AVERAGE / PEAK / AXIS)
+   ========================================================= */
+
+function updateUsageStats(
+  points,
+  unit
+){
+
+  const avgEl =
+    document.getElementById(
+      'usageAverage'
+    );
+
+  const avgLabelEl =
+    document.getElementById(
+      'usageAverageLabel'
+    );
+
+  const peakEl =
+    document.getElementById(
+      'usagePeak'
+    );
+
+  const peakTextEl =
+    document.getElementById(
+      'usagePeakText'
+    );
+
+  const axisStartEl =
+    document.getElementById(
+      'usageAxisStart'
+    );
+
+  const axisEndEl =
+    document.getElementById(
+      'usageAxisEnd'
+    );
+
+  const values =
+    points.map(
+      p =>
+        Number(
+          p.used
+        ) || 0
+    );
+
+  const sum =
+    values.reduce(
+      (
+        a,
+        b
+      ) =>
+        a + b,
+      0
+    );
+
+  const avg =
+    values.length
+      ? sum /
+        values.length
+      : 0;
+
+  const peak =
+    values.length
+      ? Math.max(
+          ...values
+        )
+      : 0;
+
+  if(avgLabelEl){
+
+    avgLabelEl.textContent =
+      unit === 'hour'
+        ? 'Avg / Hour'
+        : 'Avg / Day';
+
+  }
+
+  avgEl.textContent =
+    formatBytes(
+      avg
+    );
+
+  peakEl.textContent =
+    formatBytes(
+      peak
+    );
+
+  const peakIndex =
+    values.indexOf(
+      peak
+    );
+
+  if(
+    peak > 0 &&
+    points[peakIndex]
+  ){
+
+    peakTextEl.innerHTML =
+      'Peak <strong>' +
+      formatBytes(
+        peak
+      ) +
+      '</strong> · ' +
+      escapeHtml(
+        formatFullDateTime(
+          points[
+            peakIndex
+          ].ms,
+          unit
+        )
+      );
+
+  }else{
+
+    peakTextEl.textContent =
+      '';
+
+  }
+
+  if(
+    points.length &&
+    axisStartEl &&
+    axisEndEl
+  ){
+
+    axisStartEl.textContent =
+      formatAxisRangeLabel(
+        points[0].ms,
+        unit
+      );
+
+    axisEndEl.textContent =
+      formatAxisRangeLabel(
+        points[
+          points.length - 1
+        ].ms,
+        unit
+      );
+
+  }
+
+}
+
+/* =========================================================
+   LINE CHART
+   ========================================================= */
+
+let usageChartState =
+  null;
+
+function hideUsageTooltip(){
+
+  const tooltip =
+    document.getElementById(
+      'usageTooltip'
+    );
+
+  if(tooltip){
+
+    tooltip.style.display =
+      'none';
+
+  }
+
+  document
+    .querySelectorAll(
+      '.usage-line-point.active'
+    )
+    .forEach(
+      el =>
+        el.classList.remove(
+          'active'
+        )
+    );
+
+}
+
+/* Turns the selected point's SVG-space coordinates into real
+   pixels inside the (position:relative) chart box, then clamps/
+   flips the tooltip so it always stays a fully-visible floating
+   popup next to the point — never pinned to a fixed corner,
+   never clipped, never stuck behind the stats above the chart. */
+
+function positionUsageTooltip(
+  index
+){
+
+  const tooltip =
+    document.getElementById(
+      'usageTooltip'
+    );
+
+  const chartEl =
+    document.getElementById(
+      'lineChart'
+    );
+
+  if(
+    !tooltip ||
+    !chartEl ||
+    !usageChartState
+  ){
+
+    return;
+
+  }
+
+  const containerW =
+    chartEl.clientWidth;
+
+  const containerH =
+    chartEl.clientHeight;
+
+  if(
+    !containerW ||
+    !containerH
+  ){
+
+    return;
+
+  }
+
+  const ratioX =
+    containerW /
+    usageChartState.W;
+
+  const ratioY =
+    containerH /
+    usageChartState.H;
+
+  const pointPxX =
+    usageChartState.coordsX[
+      index
+    ] *
+    ratioX;
+
+  const pointPxY =
+    usageChartState.coordsY[
+      index
+    ] *
+    ratioY;
+
+  const gap = 10;
+
+  const tw =
+    tooltip.offsetWidth;
+
+  const th =
+    tooltip.offsetHeight;
+
+  let top =
+    pointPxY -
+    th -
+    gap;
+
+  if(top < 0){
+
+    /* Not enough room above the point — flip below it
+       instead of letting it go off (or behind other UI). */
+
+    top =
+      pointPxY +
+      gap;
+
+  }
+
+  if(
+    top +
+    th >
+    containerH
+  ){
+
+    top =
+      Math.max(
+        0,
+        containerH -
+        th
+      );
+
+  }
+
+  let left =
+    pointPxX -
+    tw / 2;
+
+  if(left < 0){
+
+    left = 0;
+
+  }
+
+  if(
+    left +
+    tw >
+    containerW
+  ){
+
+    left =
+      Math.max(
+        0,
+        containerW -
+        tw
+      );
+
+  }
+
+  tooltip.style.top =
+    top +
+    'px';
+
+  tooltip.style.left =
+    left +
+    'px';
+
+}
+
+function showUsageTooltipForIndex(
+  index
+){
+
+  if(
+    !usageChartState ||
+    !usageChartState.points.length
+  ){
+
+    return;
+
+  }
+
+  const idx =
+    Math.max(
+      0,
+      Math.min(
+        usageChartState.points.length - 1,
+        index
+      )
+    );
+
+  const point =
+    usageChartState.points[idx];
+
+  const tooltip =
+    document.getElementById(
+      'usageTooltip'
+    );
+
+  const pointsGroup =
+    document.getElementById(
+      'usageLinePoints'
+    );
+
+  if(!tooltip){
+
+    return;
+
+  }
+
+  document
+    .querySelectorAll(
+      '.usage-line-point.active'
+    )
+    .forEach(
+      el =>
+        el.classList.remove(
+          'active'
+        )
+    );
+
+  const circle =
+    pointsGroup &&
+    pointsGroup.children[
+      idx
+    ];
+
+  if(circle){
+
+    circle.classList.add(
+      'active'
+    );
+
+  }
+
+  tooltip.innerHTML =
+    '<strong>' +
+    escapeHtml(
+      formatFullDateTime(
+        point.ms,
+        usageChartState.unit
+      )
+    ) +
+    '</strong>Usage: ' +
+    escapeHtml(
+      formatBytes(
+        point.used ||
+        0
+      )
+    );
+
+  tooltip.style.display =
+    'block';
+
+  positionUsageTooltip(
+    idx
+  );
+
+}
+
+function handleUsageChartClick(
+  evt
+){
+
+  if(
+    !usageChartState ||
+    !usageChartState.points.length
+  ){
+
+    return;
+
+  }
+
+  const chartEl =
+    document.getElementById(
+      'lineChart'
+    );
+
+  if(!chartEl){
+
+    return;
+
+  }
+
+  const rect =
+    chartEl.getBoundingClientRect();
+
+  if(!rect.width){
+
+    return;
+
+  }
+
+  const clientX =
+    evt.clientX != null
+      ? evt.clientX
+      : (
+          evt.changedTouches &&
+          evt.changedTouches[0]
+            ? evt.changedTouches[0].clientX
+            : null
+        );
+
+  if(clientX == null){
+
+    return;
+
+  }
+
+  const relX =
+    (
+      clientX -
+      rect.left
+    ) /
+    rect.width *
+    usageChartState.W;
+
+  let nearest = 0;
+
+  let nearestDist =
+    Infinity;
+
+  usageChartState.coordsX.forEach(
+    (
+      cx,
+      i
+    ) => {
+
+      const dist =
+        Math.abs(
+          cx -
+          relX
+        );
+
+      if(dist < nearestDist){
+
+        nearestDist =
+          dist;
+
+        nearest = i;
+
+      }
+
+    }
+  );
+
+  showUsageTooltipForIndex(
+    nearest
+  );
+
+}
+
+function renderLineChart(
+  points,
+  unit,
+  rangeId
+){
+
+  hideUsageTooltip();
+
+  unit =
+    unit ||
+    'day';
+
+  const svg =
+    document.getElementById(
+      'usageLineSvg'
+    );
+
+  const linePath =
+    document.getElementById(
+      'usageLinePath'
+    );
+
+  const areaPath =
+    document.getElementById(
+      'usageAreaPath'
+    );
+
+  const pointsGroup =
+    document.getElementById(
+      'usageLinePoints'
+    );
+
+  const labelsGroup =
+    document.getElementById(
+      'usageLineLabels'
+    );
+
+  const gridGroup =
+    document.getElementById(
+      'usageGrid'
+    );
+
+  if(
+    !svg ||
+    !linePath ||
+    !areaPath
+  ){
+
+    return;
+
+  }
+
+  pointsGroup.innerHTML =
+    '';
+
+  labelsGroup.innerHTML =
+    '';
+
+  gridGroup.innerHTML =
+    '';
+
+  if(
+    !points ||
+    !points.length
+  ){
+
+    linePath.setAttribute(
+      'd',
+      ''
+    );
+
+    areaPath.setAttribute(
+      'd',
+      ''
+    );
+
+    usageChartState =
+      null;
+
+    return;
+
+  }
+
+  const W = 1000;
+  const H = 260;
+
+  const left = 28;
+  const right = 28;
+  const top = 20;
+  const bottom = 42;
+
+  const chartW =
+    W -
+    left -
+    right;
+
+  const chartH =
+    H -
+    top -
+    bottom;
+
+  let max =
+    0;
+
+  points.forEach(
+    p => {
+
+      const v =
+        Number(
+          p.used
+        ) || 0;
+
+      if(v > max){
+
+        max = v;
+
+      }
+
+    }
+  );
+
+  if(max <= 0){
+
+    max = 1;
+
+  }
+
+  const count =
+    points.length;
+
+  function x(i){
+
+    if(count <= 1){
+
+      return W / 2;
+
+    }
+
+    return left +
+      (
+        i /
+        (
+          count - 1
+        )
+      ) *
+      chartW;
+
+  }
+
+  function y(value){
+
+    const v =
+      Math.max(
+        0,
+        Number(
+          value
+        ) || 0
+      );
+
+    return top +
+      chartH -
+      (
+        v /
+        max
+      ) *
+      chartH;
+
+  }
+
+  /* Grid */
+
+  [
+    0,
+    .25,
+    .5,
+    .75,
+    1
+  ].forEach(
+    ratio => {
+
+      const line =
+        document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'line'
+        );
+
+      const gy =
+        top +
+        chartH -
+        ratio *
+        chartH;
+
+      line.setAttribute(
+        'x1',
+        left
+      );
+
+      line.setAttribute(
+        'x2',
+        W - right
+      );
+
+      line.setAttribute(
+        'y1',
+        gy
+      );
+
+      line.setAttribute(
+        'y2',
+        gy
+      );
+
+      line.setAttribute(
+        'class',
+        'usage-grid-line'
+      );
+
+      gridGroup.appendChild(
+        line
+      );
+
+    }
+  );
+
+  /* Line (smooth curve, no sharp breaks) */
+
+  const coords =
+    points.map(
+      (p, i) => [
+        x(i),
+        y(p.used)
+      ]
+    );
+
+  function smoothPath(
+    pts
+  ){
+
+    if(
+      pts.length < 2
+    ){
+
+      return pts.length === 1
+        ? 'M ' +
+          pts[0][0].toFixed(2) +
+          ' ' +
+          pts[0][1].toFixed(2)
+        : '';
+
+    }
+
+    const smoothing =
+      0.18;
+
+    function controlPoint(
+      current,
+      previous,
+      next,
+      reverse
+    ){
+
+      const p =
+        previous ||
+        current;
+
+      const n =
+        next ||
+        current;
+
+      const lineX =
+        n[0] -
+        p[0];
+
+      const lineY =
+        n[1] -
+        p[1];
+
+      const angle =
+        Math.atan2(
+          lineY,
+          lineX
+        ) +
+        (
+          reverse
+            ? Math.PI
+            : 0
+        );
+
+      const length =
+        Math.hypot(
+          lineX,
+          lineY
+        ) *
+        smoothing;
+
+      return [
+        current[0] +
+          Math.cos(angle) *
+          length,
+        current[1] +
+          Math.sin(angle) *
+          length
+      ];
+
+    }
+
+    let d =
+      'M ' +
+      pts[0][0].toFixed(2) +
+      ' ' +
+      pts[0][1].toFixed(2);
+
+    for(
+      let i = 1;
+      i < pts.length;
+      i++
+    ){
+
+      const cpStart =
+        controlPoint(
+          pts[i - 1],
+          pts[i - 2],
+          pts[i],
+          false
+        );
+
+      const cpEnd =
+        controlPoint(
+          pts[i],
+          pts[i - 1],
+          pts[i + 1],
+          true
+        );
+
+      d +=
+        ' C ' +
+        cpStart[0].toFixed(2) +
+        ' ' +
+        cpStart[1].toFixed(2) +
+        ', ' +
+        cpEnd[0].toFixed(2) +
+        ' ' +
+        cpEnd[1].toFixed(2) +
+        ', ' +
+        pts[i][0].toFixed(2) +
+        ' ' +
+        pts[i][1].toFixed(2);
+
+    }
+
+    return d;
+
+  }
+
+  const lineD =
+    smoothPath(
+      coords
+    );
+
+  linePath.setAttribute(
+    'd',
+    lineD
+  );
+
+  /* Area */
+
+  const firstX =
+    x(0);
+
+  const lastX =
+    x(
+      count - 1
+    );
+
+  const baseY =
+    top +
+    chartH;
+
+  const areaD =
+    lineD +
+    ' L ' +
+    lastX.toFixed(2) +
+    ' ' +
+    baseY.toFixed(2) +
+    ' L ' +
+    firstX.toFixed(2) +
+    ' ' +
+    baseY.toFixed(2) +
+    ' Z';
+
+  areaPath.setAttribute(
+    'd',
+    areaD
+  );
+
+  /* Points (custom tap/click tooltip handles interaction — see
+     handleUsageChartClick) */
+
+  points.forEach(
+    (
+      p,
+      i
+    ) => {
+
+      const circle =
+        document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'circle'
+        );
+
+      circle.setAttribute(
+        'cx',
+        x(i)
+      );
+
+      circle.setAttribute(
+        'cy',
+        y(
+          p.used
+        )
+      );
+
+      circle.setAttribute(
+        'r',
+        '4'
+      );
+
+      circle.setAttribute(
+        'class',
+        'usage-line-point'
+      );
+
+      pointsGroup.appendChild(
+        circle
+      );
+
+    }
+  );
+
+  /* Axis tick labels — thinned to roughly 8 ticks regardless of
+     bucket unit or range length */
+
+  const labelStep =
+    count > 10
+      ? Math.ceil(
+          count / 8
+        )
+      : 1;
+
+  points.forEach(
+    (
+      p,
+      i
+    ) => {
+
+      const show =
+        i === 0 ||
+        i === count - 1 ||
+        i % labelStep === 0;
+
+      if(!show){
+
+        return;
+
+      }
+
+      const label =
+        document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'text'
+        );
+
+      label.setAttribute(
+        'x',
+        x(i)
+      );
+
+      label.setAttribute(
+        'y',
+        H - 24
+      );
+
+      label.setAttribute(
+        'class',
+        'usage-day-label'
+      );
+
+      label.textContent =
+        formatAxisLabel(
+          p.ms,
+          unit,
+          rangeId
+        );
+
+      labelsGroup.appendChild(
+        label
+      );
+
+    }
+  );
+
+  usageChartState =
+    {
+      points,
+      unit,
+      rangeId,
+      W,
+      H,
+      coordsX:
+        points.map(
+          (
+            p,
+            i
+          ) =>
+            x(i)
+        ),
+      coordsY:
+        points.map(
+          p =>
+            y(p.used)
+        )
+    };
+
+}
+
+const usageChartHitEl =
+  document.getElementById(
+    'usageChartHit'
+  );
+
+if(usageChartHitEl){
+
+  /* pointerdown fires the instant a finger/mouse makes contact —
+     unlike a bare 'click', it isn't delayed while the browser
+     waits to see whether the touch turns into a scroll or a
+     double-tap-to-zoom gesture. That wait (inside a horizontally
+     scrollable, pinch-zoomable page) is what previously made the
+     first tap on a chart point look like it did nothing on iOS
+     Safari. touch-action:manipulation (see CSS) removes that
+     disambiguation delay entirely; pointerdown removes the rest. */
+
+  usageChartHitEl.addEventListener(
+    'pointerdown',
+    handleUsageChartClick
+  );
+
+  usageChartHitEl.addEventListener(
+    'click',
+    handleUsageChartClick
+  );
+
+  usageChartHitEl.addEventListener(
+    'keydown',
+    evt => {
+
+      if(
+        !usageChartState ||
+        !usageChartState.points.length
+      ){
+
+        return;
+
+      }
+
+      const current =
+        document.querySelector(
+          '.usage-line-point.active'
+        );
+
+      const pointsGroup =
+        document.getElementById(
+          'usageLinePoints'
+        );
+
+      let idx =
+        current &&
+        pointsGroup
+          ? Array.prototype.indexOf.call(
+              pointsGroup.children,
+              current
+            )
+          : -1;
+
+      if(
+        evt.key === 'ArrowRight'
+      ){
+
+        idx =
+          idx < 0
+            ? 0
+            : Math.min(
+                usageChartState.points.length - 1,
+                idx + 1
+              );
+
+      }else if(
+        evt.key === 'ArrowLeft'
+      ){
+
+        idx =
+          idx < 0
+            ? usageChartState.points.length - 1
+            : Math.max(
+                0,
+                idx - 1
+              );
+
+      }else{
+
+        return;
+
+      }
+
+      evt.preventDefault();
+
+      showUsageTooltipForIndex(
+        idx
+      );
+
+    }
+  );
+
+}
+
+document.addEventListener(
+  'click',
+  function(
+    evt
+  ){
+
+    if(
+      !evt.target ||
+      !evt.target.closest ||
+      !evt.target.closest(
+        '#lineChart'
+      )
+    ){
+
+      hideUsageTooltip();
+
+    }
+
+  }
+);
+
+/* =========================================================
+   TOTAL USAGE (AUTHORITATIVE — FROM USER OBJECT, NOT A RANGE)
+   ========================================================= */
+
+function setUsageTotalsFromUser(
+  user
+){
+
+  const totalEl =
+    document.getElementById(
+      'usageTotalValue'
+    );
+
+  if(
+    !totalEl ||
+    !user
+  ){
+
+    return;
+
+  }
+
+  const lifetime =
+    user.lifetime_used_traffic;
+
+  const hasLifetime =
+    lifetime !== null &&
+    lifetime !== undefined &&
+    !isNaN(
+      Number(
+        lifetime
+      )
+    );
+
+  const total =
+    hasLifetime
+      ? Number(
+          lifetime
+        )
+      : (
+          Number(
+            user.used_traffic
+          ) ||
+          0
+        );
+
+  totalEl.textContent =
+    formatBytes(
+      total
+    );
+
+}
+
+/* =========================================================
+   THIS MONTH (CALENDAR MONTH TO DATE)
+   ========================================================= */
+
+async function loadUsageThisMonth(){
+
+  const monthEl =
+    document.getElementById(
+      'usageMonthValue'
+    );
+
+  if(!monthEl){
+
+    return;
+
+  }
+
+  monthEl.textContent =
+    'Loading…';
+
+  const range =
+    rangeToDates();
+
+  const base =
+    subUrl();
+
+  const url =
+    base +
+    '/usage?period=day&start=' +
+    encodeURIComponent(
+      range.start.toISOString()
+    ) +
+    '&end=' +
+    encodeURIComponent(
+      range.end.toISOString()
+    );
+
+  try{
+
+    const res =
+      await fetch(
+        url,
+        {
+          headers:{
+            Accept:
+              'application/json'
+          }
+        }
+      );
+
+    if(!res.ok){
+
+      throw new Error(
+        'HTTP ' +
+        res.status
+      );
+
+    }
+
+    const data =
+      await res.json();
+
+    const entries =
+      extractTrafficEntries(
+        data
+      );
+
+    const total =
+      computeUsageTotal(
+        data,
+        entries
+      );
+
+    monthEl.textContent =
+      formatBytes(
+        total
+      );
+
+  }catch(e){
+
+    console.error(
+      '[usage] this-month request failed:',
+      url,
+      e
+    );
+
+    monthEl.textContent =
+      '—';
+
+  }
+
+}
+
+/* =========================================================
+   CHART (RANGE-SELECTABLE: 24H / 7D / LAST MONTH)
+   ========================================================= */
+
+let selectedUsageRange =
+  DEFAULT_USAGE_RANGE;
+
+async function loadUsageChart(
+  rangeId
+){
+
+  selectedUsageRange =
+    rangeId;
+
+  const mySeq =
+    ++usageRequestSeq;
+
+  const chart =
+    document.getElementById(
+      'lineChart'
+    );
+
+  const emptyEl =
+    document.getElementById(
+      'usageEmpty'
+    );
+
+  document
+    .querySelectorAll(
+      '.usage-range-btn'
+    )
+    .forEach(
+      btn => {
+
+        const active =
+          btn.dataset.range ===
+          rangeId;
+
+        btn.classList.toggle(
+          'active',
+          active
+        );
+
+        btn.setAttribute(
+          'aria-selected',
+          active
+            ? 'true'
+            : 'false'
+        );
+
+      }
+    );
+
+  if(chart){
+
+    chart.style.opacity =
+      '.55';
+
+  }
+
+  if(emptyEl){
+
+    emptyEl.style.display =
+      'none';
+
+  }
+
+  const bounds =
+    getChartRangeBounds(
+      rangeId
+    );
+
+  const start =
+    bounds.start;
+
+  const end =
+    bounds.end;
+
+  const unit =
+    bounds.unit;
+
+  const period =
+    unit === 'hour'
+      ? 'hour'
+      : 'day';
+
+  const base =
+    subUrl();
+
+  const url =
+    base +
+    '/usage?period=' +
+    period +
+    '&start=' +
+    encodeURIComponent(
+      start.toISOString()
+    ) +
+    '&end=' +
+    encodeURIComponent(
+      end.toISOString()
+    );
+
+  function showEmpty(
+    message
+  ){
+
+    if(chart){
+
+      chart.style.opacity =
+        '1';
+
+    }
+
+    if(emptyEl){
+
+      emptyEl.textContent =
+        message;
+
+      emptyEl.style.display =
+        '';
+
+    }
+
+    updateUsageStats(
+      [],
+      unit
+    );
+
+    renderLineChart(
+      [],
+      unit,
+      rangeId
+    );
+
+  }
+
+  try{
+
+    const res =
+      await fetch(
+        url,
+        {
+          headers:{
+            Accept:
+              'application/json'
+          }
+        }
+      );
+
+    if(
+      mySeq !==
+      usageRequestSeq
+    ){
+
+      return;
+
+    }
+
+    if(!res.ok){
+
+      throw new Error(
+        'HTTP ' +
+        res.status
+      );
+
+    }
+
+    const data =
+      await res.json();
+
+    if(
+      mySeq !==
+      usageRequestSeq
+    ){
+
+      return;
+
+    }
+
+    const entries =
+      extractTrafficEntries(
+        data
+      );
+
+    if(!entries.length){
+
+      showEmpty(
+        'No usage data available for this period.'
+      );
+
+      return;
+
+    }
+
+    const points =
+      bucketEntries(
+        entries,
+        start,
+        end,
+        unit
+      );
+
+    updateUsageStats(
+      points,
+      unit
+    );
+
+    renderLineChart(
+      points,
+      unit,
+      rangeId
+    );
+
+    if(chart){
+
+      chart.style.opacity =
+        '1';
+
+    }
+
+  }catch(e){
+
+    if(
+      mySeq !==
+      usageRequestSeq
+    ){
+
+      return;
+
+    }
+
+    console.error(
+      '[usage] chart request failed:',
+      url,
+      e
+    );
+
+    showEmpty(
+      'Unable to load usage data. Try again.'
+    );
+
+  }
+
+}
+
+function initUsageRangeSelector(){
+
+  const selector =
+    document.getElementById(
+      'usageRangeSelector'
+    );
+
+  if(!selector){
+
+    return;
+
+  }
+
+  selector
+    .querySelectorAll(
+      '.usage-range-btn'
+    )
+    .forEach(
+      btn => {
+
+        btn.addEventListener(
+          'click',
+          () => {
+
+            if(
+              btn.dataset.range ===
+              selectedUsageRange
+            ){
+
+              return;
+
+            }
+
+            loadUsageChart(
+              btn.dataset.range
+            );
+
+          }
+        );
+
+      }
+    );
+
+}
+
+/* =========================================================
+   LOAD USAGE (ENTRY POINT)
+   ========================================================= */
+
+async function loadUsage(){
+
+  initUsageRangeSelector();
+
+  await Promise.all([
+    loadUsageThisMonth(),
+    loadUsageChart(
+      selectedUsageRange
+    )
+  ]);
+
+}
+
+/* =========================================================
+   APPS
+   ========================================================= */
+
+function detectPlatform(){
+
+  const ua =
+    (
+      navigator.userAgent ||
+      ''
+    ).toLowerCase();
+
+  const plat =
+    (
+      navigator.platform ||
+      ''
+    ).toLowerCase();
+
+  const uad =
+    navigator.userAgentData;
+
+  if(
+    uad &&
+    uad.platform
+  ){
+
+    const p =
+      uad.platform.toLowerCase();
+
+    if(
+      p.includes(
+        'android'
+      )
+    ){
+
+      return /android tv|google tv|firetv/.test(
+        ua
+      )
+        ? 'androidtv'
+        : 'android';
+
+    }
+
+    if(
+      p.includes(
+        'ios'
+      )
+    ){
+
+      return 'ios';
+
+    }
+
+    if(
+      p.includes(
+        'windows'
+      )
+    ){
+
+      return 'windows';
+
+    }
+
+    if(
+      p.includes(
+        'mac'
+      )
+    ){
+
+      return 'macos';
+
+    }
+
+    if(
+      p.includes(
+        'linux'
+      )
+    ){
+
+      return 'linux';
+
+    }
+
+  }
+
+  if(
+    /android tv|google tv|firetv/.test(
+      ua
+    )
+  ){
+
+    return 'androidtv';
+
+  }
+
+  if(
+    /tvos|apple tv/.test(
+      ua
+    )
+  ){
+
+    return 'appletv';
+
+  }
+
+  if(
+    /iphone|ipad|ipod/.test(
+      ua
+    ) ||
+    (
+      plat === 'macintel' &&
+      'ontouchend' in document
+    )
+  ){
+
+    return 'ios';
+
+  }
+
+  if(
+    /android/.test(
+      ua
+    )
+  ){
+
+    return 'android';
+
+  }
+
+  if(
+    /windows/.test(
+      ua
+    ) ||
+    plat.includes(
+      'win'
+    )
+  ){
+
+    return 'windows';
+
+  }
+
+  if(
+    /macintosh|mac os x/.test(
+      ua
+    ) ||
+    plat.includes(
+      'mac'
+    )
+  ){
+
+    return 'macos';
+
+  }
+
+  if(
+    /linux/.test(
+      ua
+    ) ||
+    plat.includes(
+      'linux'
+    )
+  ){
+
+    return 'linux';
+
+  }
+
+  return 'other';
+
+}
+
+function canonicalPlatform(
+  p
+){
+
+  p =
+    String(
+      p ||
+      'other'
+    )
+    .toLowerCase()
+    .replace(
+      /[\s_-]+/g,
+      ''
+    );
+
+  if(
+    !p ||
+    p === 'undefined' ||
+    p === 'null'
+  ){
+
+    return 'other';
+
+  }
+
+  if(
+    p === 'iphone' ||
+    p === 'ipad' ||
+    p === 'ipados'
+  ){
+
+    return 'ios';
+
+  }
+
+  if(
+    p === 'mac' ||
+    p === 'macosx' ||
+    p === 'macintosh'
+  ){
+
+    return 'macos';
+
+  }
+
+  if(
+    p === 'win' ||
+    p === 'win32' ||
+    p === 'win64'
+  ){
+
+    return 'windows';
+
+  }
+
+  if(
+    p === 'appletvos' ||
+    p === 'tvos'
+  ){
+
+    return 'appletv';
+
+  }
+
+  if(
+    p === 'googletv' ||
+    p === 'firetv'
+  ){
+
+    return 'androidtv';
+
+  }
+
+  return p;
+
+}
+
+const PLATFORM_LABELS = {
+
+  ios:'iOS',
+  android:'Android',
+  windows:'Windows',
+  macos:'macOS',
+  linux:'Linux',
+  appletv:'Apple TV',
+  androidtv:'Android TV',
+  other:'Other'
+
+};
+
+/* Generic, dependency-free placeholder icon (inline SVG — no
+   network request, so it can never itself 404/fail). Used
+   centrally for any app with a missing or broken icon_url,
+   instead of duplicating fallback logic per app/platform. */
+
+const APP_ICON_FALLBACK_SVG =
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+  '<rect x="1" y="1" width="22" height="22" rx="5" fill="#e6e6e6"/>' +
+  '<rect x="6" y="6" width="5" height="5" rx="1.2" fill="#b3b3b3"/>' +
+  '<rect x="13" y="6" width="5" height="5" rx="1.2" fill="#b3b3b3"/>' +
+  '<rect x="6" y="13" width="5" height="5" rx="1.2" fill="#b3b3b3"/>' +
+  '<rect x="13" y="13" width="5" height="5" rx="1.2" fill="#b3b3b3"/>' +
+  '</svg>';
+
+const APP_ICON_FALLBACK =
+  'data:image/svg+xml;charset=utf-8,' +
+  encodeURIComponent(
+    APP_ICON_FALLBACK_SVG
+  );
+
+function handleAppIconError(
+  imgEl
+){
+
+  if(!imgEl){
+
+    return;
+
+  }
+
+  /* Guard against the fallback itself ever re-triggering
+     onerror (it can't, being an inline data URI, but this
+     keeps the handler safe if that ever changes). */
+
+  imgEl.onerror =
+    null;
+
+  imgEl.src =
+    APP_ICON_FALLBACK;
+
+  imgEl.classList.add(
+    'app-icon-fallback'
+  );
+
+}
+
+function appIconUrl(
+  app
+){
+
+  const raw =
+    app.icon ||
+    app.icon_url ||
+    app.image ||
+    app.logo ||
+    '';
+
+  if(!raw){
+
+    return '';
+
+  }
+
+  if(
+    /^(data:|https?:\/\/|blob:)/i.test(
+      raw
+    )
+  ){
+
+    return raw;
+
+  }
+
+  if(
+    raw.startsWith('//')
+  ){
+
+    return location.protocol +
+           raw;
+
+  }
+
+  try{
+
+    return new URL(
+      raw,
+      location.origin +
+      '/'
+    ).href;
+
+  }catch(e){
+
+    return '';
+
+  }
+
+}
+
+function appDescriptionText(
+  app
+){
+
+  const d =
+    app.description;
+
+  if(
+    typeof d === 'string'
+  ){
+
+    return d;
+
+  }
+
+  if(
+    d &&
+    typeof d === 'object'
+  ){
+
+    const candidates = [];
+
+    if(
+      navigator.language
+    ){
+
+      candidates.push(
+        String(
+          navigator.language
+        ).slice(0,2).toLowerCase()
+      );
+
+    }
+
+    if(
+      Array.isArray(
+        navigator.languages
+      )
+    ){
+
+      navigator.languages.forEach(
+        l =>
+          candidates.push(
+            String(l).slice(0,2).toLowerCase()
+          )
+      );
+
+    }
+
+    candidates.push(
+      'en',
+      'fa',
+      'ru',
+      'zh'
+    );
+
+    for(
+      const lang of candidates
+    ){
+
+      if(
+        d[lang]
+      ){
+
+        return d[lang];
+
+      }
+
+    }
+
+    const first =
+      Object.values(d).find(
+        v =>
+          typeof v === 'string' &&
+          v
+      );
+
+    return first || '';
+
+  }
+
+  return '';
+
+}
+
+function renderApps(
+  apps
+){
+
+  const card =
+    document.getElementById(
+      'appsCard'
+    );
+
+  const heading =
+    document.getElementById(
+      'appsHeading'
+    );
+
+  const list =
+    document.getElementById(
+      'appsList'
+    );
+
+  if(
+    !apps ||
+    !apps.length
+  ){
+
+    card.style.display =
+      'none';
+
+    return;
+
+  }
+
+  const current =
+    detectPlatform();
+
+  const items =
+    apps.filter(
+      a =>
+        canonicalPlatform(
+          a.platform
+        ) === current
+    );
+
+  if(
+    !items.length
+  ){
+
+    card.style.display =
+      'none';
+
+    return;
+
+  }
+
+  card.style.display =
+    '';
+
+  heading.textContent =
+    'Apps for ' +
+    (
+      PLATFORM_LABELS[
+        current
+      ] ||
+      current
+    );
+
+  list.innerHTML =
+    items.map(
+      app => {
+
+        const icon =
+          appIconUrl(
+            app
+          );
+
+        const dls =
+          (
+            app.download_links ||
+            []
+          )
+          .map(
+            d =>
+              `<a href="${escapeAttr(d.url || '')}" target="_blank" rel="noopener noreferrer">${escapeHtml(d.name || 'Download')}</a>`
+          )
+          .join('');
+
+        const imp =
+          app.import_url
+            ? `<a class="im" href="${escapeAttr(app.import_url)}" target="_blank" rel="noopener noreferrer">Add</a>`
+            : '';
+
+        const desc =
+          appDescriptionText(
+            app
+          );
+
+        return `
+
+          <div class="app-item">
+
+            <img
+              src="${escapeAttr(icon || APP_ICON_FALLBACK)}"
+              loading="lazy"
+              alt=""
+              onerror="handleAppIconError(this)">
+
+            <div
+              style="flex:1;min-width:0;">
+
+              <div class="app-name">
+                ${escapeHtml(app.name || '')}
+              </div>
+
+              ${
+                desc
+                  ? `
+                    <div class="app-desc">
+                      ${escapeHtml(desc)}
+                    </div>
+                  `
+                  : ''
+              }
+
+              <div class="app-actions">
+                ${dls}
+                ${imp}
+              </div>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
+    ).join('');
+
+}
+
+/* =========================================================
+   INIT
+   ========================================================= */
+
+async function fetchAnnounceHeaders(
+  base
+){
+
+  const headers =
+    {};
+
+  try{
+
+    const res =
+      await fetch(
+        base +
+        '/',
+        {
+          method:
+            'HEAD'
+        }
+      );
+
+    [
+      'announce',
+      'announce-url'
+    ].forEach(
+      h => {
+
+        const v =
+          res.headers.get(h);
+
+        if(v){
+
+          headers[h] =
+            v;
+
+        }
+
+      }
+    );
+
+  }catch(e){
+
+    console.error(
+      '[headers] failed:',
+      e
+    );
+
+  }
+
+  return headers;
+
+}
+
+async function init(){
+
+  const base =
+    subUrl();
+
+  /* USER */
+
+  try{
+
+    const [
+      res,
+      headHeaders
+    ] =
+      await Promise.all([
+        fetch(
+          base +
+          '/info',
+          {
+            headers:{
+              Accept:
+                'application/json'
+            }
+          }
+        ),
+        fetchAnnounceHeaders(
+          base
+        )
+      ]);
+
+    if(!res.ok){
+
+      throw new Error(
+        'HTTP ' +
+        res.status
+      );
+
+    }
+
+    const respHeaders =
+      Object.assign(
+        {},
+        headHeaders
+      );
+
+    [
+      'announce',
+      'announce-url'
+    ].forEach(
+      h => {
+
+        const v =
+          res.headers.get(h);
+
+        if(v){
+
+          respHeaders[h] =
+            v;
+
+        }
+
+      }
+    );
+
+    const user =
+      await res.json();
+
+    window.__pgUser =
+      user;
+
+    renderUser(
+      user
+    );
+
+    renderNotice(
+      user,
+      respHeaders
+    );
+
+  }catch(e){
+
+    console.error(
+      '[info] failed:',
+      e
+    );
+
+    document.getElementById(
+      'unameOut'
+    ).textContent =
+      'Error loading user info';
+
+  }
+
+  /* LINKS */
+
+  try{
+
+    const res =
+      await fetch(
+        base +
+        '/links'
+      );
+
+    if(!res.ok){
+
+      throw new Error(
+        'HTTP ' +
+        res.status
+      );
+
+    }
+
+    const text =
+      await res.text();
+
+    const links =
+      text
+        .split(
+          /\r?\n/
+        )
+        .map(
+          l =>
+            l.trim()
+        )
+        .filter(
+          Boolean
+        );
+
+    renderLinks(
+      links
+    );
+
+  }catch(e){
+
+    document.getElementById(
+      'linkList'
+    ).innerHTML =
+      '<li>Error loading links</li>';
+
+  }
+
+  /* APPS */
+
+  try{
+
+    const res =
+      await fetch(
+        base +
+        '/apps'
+      );
+
+    if(!res.ok){
+
+      throw new Error(
+        'HTTP ' +
+        res.status
+      );
+
+    }
+
+    renderApps(
+      await res.json()
+    );
+
+  }catch(e){
+
+    document.getElementById(
+      'appsCard'
+    ).style.display =
+      'none';
+
+  }
+
+  /* USAGE */
+
+  loadUsage();
+
+}
+
+/* =========================================================
+   START
+   ========================================================= */
+
+init();
+
+</script>
+
+</body>
+</html>

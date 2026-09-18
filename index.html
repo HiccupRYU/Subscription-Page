@@ -6,7 +6,7 @@
 
 <meta
   name="viewport"
-  content="width=device-width, initial-scale=1.0">
+  content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
 <title>Subscription Info</title>
 
@@ -20,6 +20,11 @@
 
 html{
   -webkit-text-size-adjust:100%;
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
 }
 
 body{
@@ -28,6 +33,18 @@ body{
   background:#f7f7f8;
   color:#111111;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+
+input,
+textarea,
+select{
+  font-size:16px;
+  max-width:100%;
 }
 
 .page{
@@ -44,6 +61,101 @@ body{
   margin:0 0 8px;
   font-size:8px;
   line-height:1.45;
+}
+
+.load-error-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(20,20,22,.32);
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:60;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:
+    opacity .22s ease,
+    visibility 0s linear .22s;
+}
+
+.load-error-overlay.open{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transition:
+    opacity .22s ease,
+    visibility 0s linear 0s;
+}
+
+.load-error-card{
+  background:#ffffff;
+  border-radius:16px;
+  width:100%;
+  max-width:230px;
+  padding:20px 18px 18px;
+  text-align:center;
+  box-sizing:border-box;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,.10),
+    0 20px 48px rgba(0,0,0,.18);
+  transform:translateY(6px) scale(.96);
+  transition:transform .22s cubic-bezier(.34,1.4,.64,1);
+}
+
+.load-error-overlay.open .load-error-card{
+  transform:translateY(0) scale(1);
+}
+
+.load-error-icon{
+  width:36px;
+  height:36px;
+  margin:0 auto 10px;
+  border-radius:50%;
+  background:#fdecea;
+  color:#e5484d;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.load-error-icon svg{
+  width:18px;
+  height:18px;
+}
+
+.load-error-title{
+  font-size:11px;
+  font-weight:700;
+  color:#111;
+  margin:0 0 6px;
+}
+
+.load-error-message{
+  font-size:8.5px;
+  color:#666;
+  line-height:1.55;
+  margin:0 0 14px;
+}
+
+.load-error-retry{
+  background:#111;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  padding:7px 20px;
+  font-family:inherit;
+  font-size:8.5px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.load-error-retry:active{
+  opacity:.85;
+  transform:scale(.97);
 }
 
 .layout{
@@ -95,28 +207,105 @@ p.field{
 }
 
 .badge{
-  display:inline-block;
-  background:#3fb950;
-  color:#fff;
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  background:rgba(63,185,80,.13);
+  color:#1c7a34;
   font-size:7px;
-  font-weight:600;
-  padding:1px 4px;
-  border-radius:4px;
+  font-weight:700;
+  padding:2px 7px;
+  border-radius:99px;
   margin-left:2px;
   vertical-align:middle;
+  text-transform:capitalize;
+}
+
+.badge::before{
+  content:'';
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#3fb950;
+  flex-shrink:0;
 }
 
 .badge.expired{
+  background:rgba(224,82,74,.13);
+  color:#a33333;
+}
+
+.badge.expired::before{
   background:#e0524a;
 }
 
 .badge.disabled{
+  background:rgba(138,138,138,.15);
+  color:#555555;
+}
+
+.badge.disabled::before{
   background:#8a8a8a;
 }
 
-/* =========================================================
-   LINKS
-   ========================================================= */
+.badge.on-hold{
+  background:rgba(142,68,173,.13);
+  color:#8e44ad;
+}
+
+.badge.on-hold::before{
+  background:#8e44ad;
+}
+
+@keyframes badgePopIn{
+  0%{
+    transform:scale(.7);
+    opacity:0;
+  }
+  60%{
+    transform:scale(1.08);
+    opacity:1;
+  }
+  100%{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+.badge.badge-pop{
+  animation:badgePopIn .4s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+@keyframes badgeLivePulse{
+  0%{
+    box-shadow:0 0 0 0 rgba(63,185,80,.55);
+  }
+  70%{
+    box-shadow:0 0 0 4px rgba(63,185,80,0);
+  }
+  100%{
+    box-shadow:0 0 0 0 rgba(63,185,80,0);
+  }
+}
+
+.badge:not(.expired):not(.disabled):not(.on-hold)::before{
+  animation:badgeLivePulse 2s ease-out infinite;
+}
+
+@keyframes fieldFadeIn{
+  from{
+    opacity:0;
+    transform:translateY(3px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.field-fade-in{
+  animation:fieldFadeIn .45s cubic-bezier(.22,1,.36,1) both;
+}
 
 ul.links{
   list-style:none;
@@ -133,6 +322,9 @@ ul.links li{
   border-radius:6px;
   width:max-content;
   max-width:100%;
+  transition:
+    background .2s ease,
+    box-shadow .2s ease;
 }
 
 ul.links li::before{
@@ -140,6 +332,51 @@ ul.links li::before{
   font-size:8px;
   color:#111;
   flex-shrink:0;
+}
+
+#linkList{
+  overflow:hidden;
+  transition:
+    max-height .32s cubic-bezier(.4,0,.2,1),
+    opacity .28s ease;
+}
+
+.sub-link-text{
+  color:#3f6fd6;
+}
+
+.sub-link-badge{
+  display:inline-flex;
+  align-items:center;
+  font-size:6.5px;
+  font-weight:700;
+  letter-spacing:.2px;
+  color:#3f6fd6;
+  background:#eef1ff;
+  border:1px solid #dbe4ff;
+  border-radius:999px;
+  padding:2px 7px;
+  white-space:nowrap;
+  flex-shrink:0;
+  cursor:default;
+  pointer-events:none;
+  -webkit-user-select:none;
+  user-select:none;
+}
+
+@keyframes staggerEnter{
+  from{
+    opacity:0;
+    transform:translateY(4px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.stagger-enter{
+  animation:staggerEnter .35s cubic-bezier(.22,1,.36,1) both;
 }
 
 .link-text{
@@ -156,14 +393,35 @@ ul.links li::before{
 .btn{
   font-family:inherit;
   font-size:7px;
-  color:#111;
-  background:#eeeeee;
-  border:1px solid #dcdcdc;
-  border-radius:5px;
-  padding:1px 5px;
+  font-weight:600;
+  color:#333;
+  background:#f0f1f3;
+  border:1px solid #e3e4e7;
+  border-radius:999px;
+  padding:2px 7px 2px 5px;
   cursor:pointer;
   flex-shrink:0;
   white-space:nowrap;
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  position:relative;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.btn::before{
+  content:'';
+  position:absolute;
+  top:-8px;
+  left:-2px;
+  right:-2px;
+  bottom:-8px;
+}
+
+.btn svg{
+  flex-shrink:0;
+  color:#3fb950;
 }
 
 .btn:active{
@@ -177,18 +435,34 @@ ul.links li::before{
   color:#1c7a34;
 }
 
+.btn.copied svg{
+  color:#1c7a34;
+}
+
 .btn.copy-failed{
   background:#fdecea;
   border-color:#e0524a;
   color:#a33;
 }
 
+.btn.copy-failed svg{
+  color:#e0524a;
+}
+
 .btn-copy-all{
   font-size:8px;
-  padding:2px 8px;
-  background:#111;
+  padding:2px 9px 2px 6px;
+  background:#3461fd;
   color:#fff;
-  border-color:#111;
+  border-color:#3461fd;
+}
+
+.btn-copy-all svg{
+  color:#fff;
+}
+
+.btn-copy-all:active{
+  background:#2a4fd6;
 }
 
 .btn-copy-all.copied{
@@ -197,9 +471,102 @@ ul.links li::before{
   color:#fff;
 }
 
+.btn-copy-all.copied svg{
+  color:#fff;
+}
+
 .btn-copy-all.copy-failed{
   background:#e0524a;
   border-color:#e0524a;
+  color:#fff;
+}
+
+.copy-as-wrap{
+  position:relative;
+  display:inline-flex;
+}
+
+.copy-as-menu{
+  position:absolute;
+  top:100%;
+  right:0;
+  margin-top:5px;
+  background:#ffffff;
+  border:1px solid #e3e4e7;
+  border-radius:10px;
+  box-shadow:
+    0 4px 12px rgba(0,0,0,.08),
+    0 12px 28px rgba(0,0,0,.12);
+  padding:4px;
+  min-width:140px;
+  z-index:8;
+  display:block;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateY(-4px) scale(.98);
+  transform-origin:top right;
+  transition:
+    opacity .16s ease,
+    transform .16s ease,
+    visibility 0s linear .16s;
+}
+
+.copy-as-menu.open{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translateY(0) scale(1);
+  transition:
+    opacity .16s ease,
+    transform .16s ease,
+    visibility 0s linear 0s;
+}
+
+.copy-as-item{
+  display:block;
+  width:100%;
+  text-align:left;
+  font-family:inherit;
+  font-size:8px;
+  font-weight:600;
+  color:#222;
+  background:none;
+  border:none;
+  border-radius:6px;
+  padding:6px 8px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.copy-as-item:active{
+  background:#f0f1f3;
+}
+
+.copy-as-item:disabled,
+.btn-copy-all:disabled{
+  opacity:.55;
+  cursor:default;
+  pointer-events:none;
+}
+
+.copy-as-item:focus-visible{
+  outline:2px solid #6b9bff;
+  outline-offset:-2px;
+  background:#f0f1f3;
+}
+
+.copy-as-item.copied{
+  color:#1c7a34;
+  background:#eaf7ee;
+}
+
+.copy-as-item.copy-failed{
+  color:#a33;
+  background:#fbeceb;
+}
+
+.btn-copy-all.copy-failed svg{
   color:#fff;
 }
 
@@ -217,92 +584,800 @@ ul.links li::before{
   transform:rotate(-90deg);
 }
 
-/* =========================================================
-   USER
-   ========================================================= */
+.info-rings-row{
+  display:flex;
+  align-items:stretch;
+  gap:8px;
+}
 
-.user-card-top{
+.user-card{
+  position:relative;
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+}
+
+.user-card-alert{
+  position:absolute;
+  top:10px;
+  right:8px;
+  width:13px;
+  height:13px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#8a8d93;
+  flex-shrink:0;
+  cursor:default;
+}
+
+.user-card-alert svg{
+  display:block;
+  width:100%;
+  height:100%;
+}
+
+.user-card-alert::before{
+  content:'';
+  position:absolute;
+  inset:-5px;
+  border-radius:50%;
+  border:1.4px solid rgba(52,97,253,.55);
+  animation:pgAlertPulse 2.4s ease-out infinite;
+  pointer-events:none;
+}
+
+.user-card-alert.hint-dismissed::before{
+  animation:none;
+  opacity:0;
+}
+
+@keyframes pgAlertPulse{
+  0%{
+    transform:scale(.75);
+    opacity:.95;
+  }
+  70%{
+    transform:scale(1.9);
+    opacity:0;
+  }
+  100%{
+    transform:scale(1.9);
+    opacity:0;
+  }
+}
+
+.user-card-alert-tip{
+  position:absolute;
+  top:24px;
+  right:-6px;
+  background:#1f2024;
+  color:#fff;
+  font-size:8px;
+  font-weight:600;
+  line-height:1.4;
+  padding:5px 9px;
+  border-radius:8px;
+  white-space:nowrap;
+  box-shadow:
+    0 2px 6px rgba(0,0,0,.14),
+    0 10px 24px rgba(0,0,0,.22);
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(-4px);
+  pointer-events:none;
+  transition:
+    opacity .2s ease,
+    transform .2s ease,
+    visibility 0s linear .2s;
+  z-index:6;
+}
+
+.user-card-alert-tip.show{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+  pointer-events:auto;
+  transition:
+    opacity .2s ease,
+    transform .2s ease,
+    visibility 0s linear 0s;
+}
+
+.user-card-alert-tip::before{
+  content:'';
+  position:absolute;
+  top:-3px;
+  right:10px;
+  width:6px;
+  height:6px;
+  background:#1f2024;
+  transform:rotate(45deg);
+}
+
+.data-used-card{
+  flex:0 0 auto;
+}
+
+.user-card-head{
   display:flex;
   align-items:flex-start;
-  justify-content:space-between;
-  gap:10px;
+  gap:7px;
 }
 
-.usage-rings{
+.user-card-title{
+  flex:1 1 auto;
+  min-width:0;
+}
+
+.user-card-title h1{
+  margin:0 0 3px;
+}
+
+.user-username-row{
   display:flex;
-  gap:8px;
-  flex-shrink:0;
+  align-items:center;
+  gap:4px;
+  margin-bottom:4px;
 }
 
-.ring-block{
+.user-status-row{
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+
+.user-status-label{
+  font-size:8px;
+  color:#666;
+}
+
+.user-created-row{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  margin-bottom:4px;
+}
+
+.user-created-label{
+  font-size:8px;
+  color:#666;
+}
+
+.user-created-value{
+  font-size:8px;
+  font-weight:600;
+  color:#111;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.user-username-label{
+  font-size:8px;
+  color:#666;
+}
+
+.user-username-value{
+  font-size:8px;
+  font-weight:600;
+  color:#111;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:130px;
+}
+
+.data-used-card{
+  width:130px;
+  padding:0;
+  overflow:hidden;
+  touch-action:none;
+  -webkit-user-select:none;
+  user-select:none;
+}
+
+.du-page-viewport{
+  overflow:hidden;
+}
+
+.du-page-track{
+  display:flex;
+  flex-direction:column;
+  transform:translateY(0%);
+  transition:transform .5s cubic-bezier(.34,1.35,.64,1);
+}
+
+@keyframes duPageSwipeHint{
+  0%{
+    transform:translateY(0);
+  }
+  35%{
+    transform:translateY(calc(-1 * var(--du-swipe-hint-peek, 14px)));
+  }
+  62%{
+    transform:translateY(calc(-1 * var(--du-swipe-hint-peek, 14px)));
+  }
+  100%{
+    transform:translateY(0);
+  }
+}
+
+.du-page-track.du-swipe-hint-play{
+  animation:duPageSwipeHint .95s cubic-bezier(.34,1.15,.64,1) 1;
+}
+
+.du-page{
+  flex:0 0 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:7px 9px;
+  box-sizing:border-box;
+}
+
+.du-page-track:not(.du-ready) .du-page:not(:first-child){
+  display:none;
+}
+
+.du-page-empty{
+}
+
+.du-page-dots{
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:2px;
+  justify-content:center;
+  align-self:center;
+  gap:5px;
+  flex:0 0 auto;
+  padding:0 1px;
 }
 
-.ring-caption{
-  font-size:6px;
-  color:#777;
-  font-weight:600;
-  text-transform:uppercase;
-  letter-spacing:.02em;
+.du-page-dot{
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:#d8d8da;
+  transition:background .25s ease;
 }
 
-.usage-ring-wrap{
-  position:relative;
-  width:46px;
-  height:46px;
-  flex-shrink:0;
+.du-page-dot.active{
+  background:#9aa0a6;
 }
 
-.usage-ring{
+.du-swipe-hint{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:12px;
+  height:12px;
+  color:#b7bac2;
+  margin-bottom:2px;
+  opacity:.7;
+  transition:opacity .3s ease;
+  animation:duSwipeHintBounce 1.6s ease-in-out infinite;
+}
+
+.du-swipe-hint svg{
   width:100%;
   height:100%;
-  transform:rotate(-90deg);
   display:block;
 }
 
-.ring-bg{
+.du-swipe-hint.hidden{
+  opacity:0;
+}
+
+.toast{
+  position:fixed;
+  top:calc(env(safe-area-inset-top, 0px) + 10px);
+  left:50%;
+  width:calc(100% - 24px);
+  max-width:380px;
+  transform:translate(-50%, calc(-100% - 20px));
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  background:rgba(247,247,249,.85);
+  -webkit-backdrop-filter:blur(20px) saturate(1.6);
+  backdrop-filter:blur(20px) saturate(1.6);
+  color:#111111;
+  border-radius:14px;
+  padding:9px 11px;
+  font-size:8px;
+  line-height:1.35;
+  box-shadow:
+    0 2px 6px rgba(0,0,0,.08),
+    0 14px 30px rgba(0,0,0,.16);
+  z-index:60;
+  touch-action:none;
+  -webkit-user-select:none;
+  user-select:none;
+  transition:
+    opacity .3s cubic-bezier(.32,.72,0,1),
+    transform .3s cubic-bezier(.32,.72,0,1),
+    visibility 0s linear .3s;
+}
+
+.toast.show{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translate(-50%, 0);
+  transition:
+    opacity .3s cubic-bezier(.32,.72,0,1),
+    transform .3s cubic-bezier(.32,.72,0,1),
+    visibility 0s linear 0s;
+}
+
+.toast.dragging{
+  transition:none;
+}
+
+.toast-icon{
+  flex-shrink:0;
+  width:20px;
+  height:20px;
+  border-radius:6px;
+  background:#ff3b30;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:1px;
+  transition:opacity .14s ease, background-color .2s ease;
+}
+
+.toast.success .toast-icon{
+  background:#34c759;
+}
+
+.toast.error .toast-icon{
+  background:#ff3b30;
+}
+
+.toast-body{
+  flex:1 1 auto;
+  min-width:0;
+}
+
+.toast-title{
+  font-weight:700;
+  color:inherit;
+  margin-bottom:1px;
+  transition:opacity .14s ease;
+}
+
+.toast-text{
+  font-weight:500;
+  color:#6b6d72;
+  transition:opacity .14s ease;
+}
+
+@keyframes duSwipeHintBounce{
+  0%,100%{
+    transform:translateY(0);
+  }
+  50%{
+    transform:translateY(2px);
+  }
+}
+
+.du-head{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:7px;
+}
+
+.du-icon-box{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#3fb950;
+  flex-shrink:0;
+}
+
+.du-head-text{
+  min-width:0;
+}
+
+.du-title{
+  font-size:10px;
+  font-weight:700;
+  color:#111;
+  line-height:1.2;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.du-subtitle{
+  font-size:6px;
+  color:#888;
+  line-height:1.3;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.du-body{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+.du-ring-wrap{
+  position:relative;
+  width:44px;
+  height:44px;
+  flex-shrink:0;
+}
+
+.du-ring{
+  width:100%;
+  height:100%;
+  display:block;
+  overflow:visible;
+  transform:scale(1.22);
+  transform-origin:center;
+}
+
+.du-ring-bg{
   fill:none;
-  stroke:#ececec;
+  stroke:#eef0f4;
   stroke-width:3;
 }
 
-.ring-fg{
+.du-ring-fg{
   fill:none;
-  stroke:#3fb950;
+  stroke:url(#duRingGradient);
   stroke-width:3;
   stroke-linecap:round;
-  transition:stroke-dasharray .4s ease;
+  transition:stroke-dasharray .5s cubic-bezier(.22,.61,.36,1), stroke .4s ease;
 }
 
-.ring-fg.ring-warn{
-  stroke:#e0a800;
-}
-
-.ring-fg.ring-danger{
-  stroke:#e0524a;
-}
-
-.ring-fg.ring-inf{
+.du-ring-fg.inf{
   stroke:#9aa0a6;
 }
 
-.usage-ring-label{
+.du-ring-fg.zero{
+  stroke-linecap:butt;
+}
+
+@keyframes ringDangerPulse{
+  0%{
+    filter:drop-shadow(0 0 0 rgba(229,72,77,.6));
+  }
+  70%{
+    filter:drop-shadow(0 0 3px rgba(229,72,77,0));
+  }
+  100%{
+    filter:drop-shadow(0 0 0 rgba(229,72,77,0));
+  }
+}
+
+.du-ring-fg.danger{
+  animation:ringDangerPulse 1.8s ease-out infinite;
+}
+
+.du-ring-dot{
+  display:none;
+  fill:#3fb950;
+  stroke:#ffffff;
+  stroke-width:1.4;
+  transition:cx .5s cubic-bezier(.22,.61,.36,1), cy .5s cubic-bezier(.22,.61,.36,1), opacity .25s ease;
+}
+
+.du-ring-label{
   position:absolute;
   inset:0;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:7px;
-  font-weight:700;
+  font-size:8.5px;
+  font-weight:800;
   color:#111;
+  transition:color .4s ease;
 }
 
-/* =========================================================
-   DATA USAGE
-   ========================================================= */
+.du-stats{
+  flex:1 1 auto;
+  min-width:0;
+}
+
+.du-used-value{
+  font-size:11px;
+  font-weight:800;
+  color:#111;
+  letter-spacing:-.2px;
+  line-height:1.15;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.du-of-limit{
+  font-size:6.5px;
+  color:#888;
+  margin-top:1px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.du-divider{
+  height:1px;
+  background:transparent;
+  margin:5px 0;
+}
+
+.du-remaining-row{
+  display:flex;
+  align-items:flex-start;
+  gap:5px;
+}
+
+.du-remaining-dot{
+  width:5px;
+  height:5px;
+  margin-top:3px;
+  border-radius:50%;
+  background:#3fb950;
+  flex-shrink:0;
+  transition:background-color .4s ease;
+}
+
+.du-remaining-col{
+  min-width:0;
+}
+
+.du-remaining-value{
+  font-size:8.5px;
+  font-weight:700;
+  color:#111;
+  line-height:1.2;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.du-remaining-label{
+  font-size:6px;
+  color:#888;
+  line-height:1.3;
+}
+
+.du-reset-row{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin-top:8px;
+  padding-top:7px;
+}
+
+.dl-expire-row{
+  margin-top:8px;
+  padding-top:7px;
+}
+
+.du-reset-icon-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#8a8a8a;
+  flex-shrink:0;
+}
+
+.du-reset-label{
+  font-size:6.5px;
+  color:#888;
+  flex:1 1 auto;
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.du-reset-value{
+  font-size:7.5px;
+  font-weight:700;
+  color:#111;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  flex-shrink:0;
+}
+
+.du-footer{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-top:auto;
+  padding-top:6px;
+  border-top:1px solid #f0f0f0;
+}
+
+.du-conn-row{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+}
+
+.du-conn-icon-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:11px;
+  height:11px;
+  flex-shrink:0;
+  color:#8a8a8a;
+}
+
+.du-conn-icon-wrap svg{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.du-conn-text{
+  flex:1 1 auto;
+  min-width:0;
+}
+
+.du-conn-top-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:4px;
+}
+
+.du-conn-label{
+  font-size:6px;
+  color:#888;
+  line-height:1.3;
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.du-conn-value{
+  font-size:8px;
+  font-weight:700;
+  color:#111;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  line-height:1.3;
+  margin-top:1px;
+}
+
+.du-days-hero{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:flex-start;
+  flex:1 1 auto;
+  gap:6px;
+  padding:3px 0 5px;
+  min-width:0;
+}
+
+.du-days-hero-label{
+  display:flex;
+  flex-direction:column;
+  font-size:6.5px;
+  font-weight:600;
+  color:#888;
+  letter-spacing:.1px;
+  line-height:1.35;
+  text-align:left;
+  flex-shrink:0;
+}
+
+.du-days-hero-value.ph-loading + .du-days-hero-label,
+.du-days-hero-value.du-days-hero-value--text + .du-days-hero-label{
+  display:none;
+}
+
+.du-days-hero-value{
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;
+  font-weight:700;
+  color:#111;
+  line-height:.85;
+  font-size:40px;
+  white-space:nowrap;
+  flex-shrink:1;
+  min-width:0;
+  overflow:hidden;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1;
+  letter-spacing:-.5px;
+  transition:color .4s ease;
+}
+
+@keyframes textDangerPulse{
+  0%{
+    text-shadow:0 0 0 rgba(229,72,77,.6);
+  }
+  70%{
+    text-shadow:0 0 7px rgba(229,72,77,0);
+  }
+  100%{
+    text-shadow:0 0 0 rgba(229,72,77,0);
+  }
+}
+
+.du-days-hero-value.danger{
+  animation:textDangerPulse 1.8s ease-out infinite;
+}
+
+.ph-loading{
+  font-size:7px !important;
+  font-weight:500 !important;
+  color:#a3a3a9 !important;
+  letter-spacing:0 !important;
+  text-transform:none !important;
+  transform:none !important;
+  animation:phShimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes phShimmer{
+  0%,100%{
+    opacity:.45;
+  }
+  50%{
+    opacity:.95;
+  }
+}
+
+.du-days-hero-value.ph-loading{
+  line-height:1.1 !important;
+  overflow:visible !important;
+}
+
+.du-days-hero-value.du-days-hero-value--text{
+  font-size:12px;
+  font-weight:700;
+  line-height:1.3;
+  overflow:visible;
+  transform:none;
+  letter-spacing:0;
+}
+
+.du-conn-hint{
+  display:flex;
+  align-items:center;
+  gap:2px;
+  font-size:5.5px;
+  color:#9aa0a6;
+  margin-top:1px;
+  white-space:nowrap;
+}
+
+.du-footer .badge{
+  flex-shrink:0;
+  white-space:nowrap;
+  font-size:6px;
+  padding:1px 6px;
+  margin-left:0;
+  gap:2.5px;
+}
+
+.du-footer .badge::before{
+  width:3.5px;
+  height:3.5px;
+}
 
 .usage-headline{
   display:grid;
@@ -354,6 +1429,10 @@ ul.links li::before{
   padding:3px 8px;
   cursor:pointer;
   white-space:nowrap;
+  transition:
+    background .2s ease,
+    border-color .2s ease,
+    color .2s ease;
 }
 
 .usage-range-btn:active{
@@ -391,10 +1470,6 @@ ul.links li::before{
   margin-top:2px;
 }
 
-/* =========================================================
-   LINE CHART
-   ========================================================= */
-
 .line-chart-wrap{
   width:100%;
   overflow-x:auto;
@@ -402,6 +1477,10 @@ ul.links li::before{
   padding:5px 0 2px;
   -webkit-overflow-scrolling:touch;
   scrollbar-width:none;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+  -webkit-tap-highlight-color:transparent;
 }
 
 .line-chart-wrap::-webkit-scrollbar{
@@ -413,6 +1492,8 @@ ul.links li::before{
   width:100%;
   min-width:540px;
   height:150px;
+  -webkit-user-select:none;
+  user-select:none;
 }
 
 .line-chart svg{
@@ -420,6 +1501,9 @@ ul.links li::before{
   width:100%;
   height:100%;
   overflow:visible;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
 }
 
 .usage-line-path{
@@ -429,11 +1513,14 @@ ul.links li::before{
   stroke-linecap:round;
   stroke-linejoin:round;
   vector-effect:non-scaling-stroke;
+  transition:stroke-dashoffset .9s cubic-bezier(.4,0,.2,1);
 }
 
 .usage-area-path{
   fill:url(#usageLineGradient);
   stroke:none;
+  opacity:0;
+  transition:opacity .7s ease .2s;
 }
 
 .usage-line-point{
@@ -441,6 +1528,44 @@ ul.links li::before{
   stroke:#ffffff;
   stroke-width:1.5;
   vector-effect:non-scaling-stroke;
+  transition:
+    r .4s cubic-bezier(.34,1.56,.64,1),
+    fill .25s ease;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .usage-line-path,
+  .usage-area-path,
+  .usage-line-point{
+    transition:none !important;
+  }
+  .badge.badge-pop,
+  .field-fade-in{
+    animation:none !important;
+  }
+  .badge:not(.expired):not(.disabled):not(.on-hold)::before{
+    animation:none !important;
+  }
+  .du-ring-fg.danger,
+  .du-days-hero-value.danger{
+    animation:none !important;
+  }
+  .stagger-enter{
+    animation:none !important;
+  }
+  #linkList{
+    transition:none !important;
+  }
+  .qr-inline-box{
+    animation:none !important;
+  }
+  .load-error-overlay,
+  .load-error-card{
+    transition:none !important;
+  }
+  .ph-loading{
+    animation:none !important;
+  }
 }
 
 .usage-line-point.active{
@@ -452,6 +1577,10 @@ ul.links li::before{
   pointer-events:all;
   cursor:pointer;
   touch-action:manipulation;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;
 }
 
 .usage-chart-hit:focus{
@@ -480,6 +1609,25 @@ ul.links li::before{
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
+  -webkit-user-select:none;
+  user-select:none;
+  opacity:0;
+  visibility:hidden;
+  transform:scale(.92) translateY(4px);
+  transition:
+    opacity .16s ease,
+    transform .16s ease,
+    visibility 0s linear .16s;
+}
+
+.usage-tooltip.show{
+  opacity:1;
+  visibility:visible;
+  transform:scale(1) translateY(0);
+  transition:
+    opacity .16s ease,
+    transform .16s ease,
+    visibility 0s linear 0s;
 }
 
 .usage-tooltip strong{
@@ -500,6 +1648,8 @@ ul.links li::before{
   fill:#777;
   text-anchor:middle;
   dominant-baseline:hanging;
+  -webkit-user-select:none;
+  user-select:none;
 }
 
 .usage-chart-axis{
@@ -598,6 +1748,11 @@ ul.links li::before{
     padding:4px 12px;
   }
 
+  .copy-as-item{
+    font-size:12px;
+    padding:8px 10px;
+  }
+
   .app-name{
     font-size:12px;
   }
@@ -616,17 +1771,102 @@ ul.links li::before{
     height:32px;
   }
 
-  .usage-ring-wrap{
-    width:60px;
-    height:60px;
+  .data-used-card{
+    width:158px;
   }
 
-  .usage-ring-label{
+  .du-page-dots{
+    gap:6px;
+  }
+
+  .du-page-dot{
+    width:5px;
+    height:5px;
+  }
+
+  .du-title{
+    font-size:14px;
+  }
+
+  .du-subtitle{
+    font-size:7.5px;
+  }
+
+  .du-ring-wrap{
+    width:52px;
+    height:52px;
+  }
+
+  .du-ring-label{
+    font-size:10px;
+  }
+
+  .du-used-value{
+    font-size:14px;
+  }
+
+  .du-of-limit{
+    font-size:8px;
+  }
+
+  .du-remaining-value{
+    font-size:10.5px;
+  }
+
+  .du-remaining-label{
+    font-size:7.5px;
+  }
+
+  .du-conn-icon-wrap{
+    width:12px;
+    height:12px;
+  }
+
+  .du-conn-label{
+    font-size:7.5px;
+  }
+
+  .du-conn-value{
+    font-size:10px;
+  }
+
+  .du-days-hero-label{
+    font-size:7.5px;
+  }
+
+  .du-days-hero-value{
+    font-size:42px;
+  }
+
+  .du-days-hero-value.du-days-hero-value--text{
+    font-size:13px;
+    line-height:1.3;
+    overflow:visible;
+    transform:none;
+  }
+
+  .du-conn-hint{
+    font-size:7px;
+  }
+
+  .du-reset-label{
+    font-size:8px;
+  }
+
+  .du-reset-value{
+    font-size:9.5px;
+  }
+
+  .user-username-label,
+  .user-username-value,
+  .user-status-label,
+  .user-created-label,
+  .user-created-value{
     font-size:11px;
   }
 
-  .ring-caption{
-    font-size:9px;
+  .user-username-value{
+    max-width:170px;
   }
 
   .usage-headline-value{
@@ -660,10 +1900,6 @@ ul.links li::before{
   }
 
 }
-
-/* =========================================================
-   DESKTOP
-   ========================================================= */
 
 @media (min-width:1024px){
 
@@ -710,6 +1946,11 @@ ul.links li::before{
     padding:5px 14px;
   }
 
+  .copy-as-item{
+    font-size:13px;
+    padding:9px 11px;
+  }
+
   .btn:hover{
     box-shadow:0 3px 8px rgba(0,0,0,.12);
     transform:translateY(-1px);
@@ -720,17 +1961,102 @@ ul.links li::before{
     box-shadow:0 2px 6px rgba(0,0,0,.05);
   }
 
-  .usage-ring-wrap{
-    width:72px;
-    height:72px;
+  .data-used-card{
+    width:186px;
   }
 
-  .usage-ring-label{
+  .du-page-dots{
+    gap:7px;
+  }
+
+  .du-page-dot{
+    width:6px;
+    height:6px;
+  }
+
+  .du-title{
+    font-size:17px;
+  }
+
+  .du-subtitle{
+    font-size:8.5px;
+  }
+
+  .du-ring-wrap{
+    width:58px;
+    height:58px;
+  }
+
+  .du-ring-label{
+    font-size:11px;
+  }
+
+  .du-used-value{
+    font-size:16px;
+  }
+
+  .du-of-limit{
+    font-size:9px;
+  }
+
+  .du-remaining-value{
+    font-size:11.5px;
+  }
+
+  .du-remaining-label{
+    font-size:8px;
+  }
+
+  .du-conn-icon-wrap{
+    width:13px;
+    height:13px;
+  }
+
+  .du-conn-label{
+    font-size:8px;
+  }
+
+  .du-conn-value{
+    font-size:11px;
+  }
+
+  .du-days-hero-label{
+    font-size:8px;
+  }
+
+  .du-days-hero-value{
+    font-size:46px;
+  }
+
+  .du-days-hero-value.du-days-hero-value--text{
+    font-size:14px;
+    line-height:1.3;
+    overflow:visible;
+    transform:none;
+  }
+
+  .du-conn-hint{
+    font-size:7.5px;
+  }
+
+  .du-reset-label{
+    font-size:8.5px;
+  }
+
+  .du-reset-value{
+    font-size:10px;
+  }
+
+  .user-username-label,
+  .user-username-value,
+  .user-status-label,
+  .user-created-label,
+  .user-created-value{
     font-size:13px;
   }
 
-  .ring-caption{
-    font-size:10px;
+  .user-username-value{
+    max-width:220px;
   }
 
   .usage-headline-value{
@@ -738,10 +2064,6 @@ ul.links li::before{
   }
 
 }
-
-/* =========================================================
-   WIDE
-   ========================================================= */
 
 @media (
   min-width:820px
@@ -771,10 +2093,6 @@ ul.links li::before{
 
 }
 
-/* =========================================================
-   PORTRAIT
-   ========================================================= */
-
 @media (
   max-width:819px
 ) and (
@@ -790,10 +2108,6 @@ ul.links li::before{
   }
 
 }
-
-/* =========================================================
-   APPS
-   ========================================================= */
 
 .app-item{
   display:flex;
@@ -850,10 +2164,6 @@ ul.links li::before{
   border-color:#111;
 }
 
-/* =========================================================
-   INLINE QR (PER LINK ROW)
-   ========================================================= */
-
 ul.links li.active-qr{
   background:#eef5ff;
   box-shadow:inset 0 0 0 1px rgba(63,140,255,.3);
@@ -864,6 +2174,32 @@ li.qr-row{
   display:block;
   width:100%;
   margin:2px 0 6px;
+}
+
+li.qr-row::before{
+  content:none;
+}
+
+@keyframes qrBoxEnter{
+  from{
+    opacity:0;
+    transform:scale(.92) translateY(-4px);
+  }
+  to{
+    opacity:1;
+    transform:scale(1) translateY(0);
+  }
+}
+
+@keyframes qrBoxExit{
+  from{
+    opacity:1;
+    transform:scale(1) translateY(0);
+  }
+  to{
+    opacity:0;
+    transform:scale(.92) translateY(-4px);
+  }
 }
 
 .qr-inline-box{
@@ -879,6 +2215,7 @@ li.qr-row{
   border-radius:12px;
   background:#fafafa;
   border:1px dashed #e2e2e2;
+  animation:qrBoxEnter .28s cubic-bezier(.34,1.56,.64,1) both;
 }
 
 .qr-inline-box #qrInlineBox{
@@ -913,19 +2250,24 @@ li.qr-row{
   position:absolute;
   top:-8px;
   right:-8px;
-  width:20px;
-  height:20px;
+  width:22px;
+  height:22px;
   border-radius:50%;
   background:#eeeeee;
   border:1px solid #dcdcdc;
   color:#333;
-  font-size:10px;
-  line-height:1;
+  padding:0;
   cursor:pointer;
   display:flex;
   align-items:center;
   justify-content:center;
   box-shadow:0 2px 6px rgba(0,0,0,.15);
+}
+
+.qr-inline-close svg{
+  width:10px;
+  height:10px;
+  flex-shrink:0;
 }
 
 .qr-inline-close:active{
@@ -954,9 +2296,41 @@ li.qr-row{
   .qr-inline-close{
     width:26px;
     height:26px;
-    font-size:13px;
     top:-10px;
     right:-10px;
+  }
+
+  .qr-inline-close svg{
+    width:12px;
+    height:12px;
+  }
+
+  .info-modal-close{
+    width:26px;
+    height:26px;
+    top:-10px;
+    right:-10px;
+  }
+
+  .info-modal-close svg{
+    width:12px;
+    height:12px;
+  }
+
+  .info-modal-title{
+    font-size:14px;
+  }
+
+  .info-modal-label{
+    font-size:11px;
+  }
+
+  .info-modal-value{
+    font-size:13px;
+  }
+
+  .info-modal-badge{
+    font-size:11px;
   }
 
 }
@@ -980,6 +2354,694 @@ li.qr-row{
 
 }
 
+.support-fab-wrap{
+  position:fixed;
+  right:16px;
+  bottom:16px;
+  z-index:60;
+  display:none;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:10px;
+}
+
+.support-fab-wrap.ready{
+  display:flex;
+}
+
+.support-fab-btn{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  border:none;
+  background:linear-gradient(135deg,#3d6bff 0%,#3159f2 100%);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  flex-shrink:0;
+  transition:transform .15s ease, filter .2s ease;
+}
+
+.support-fab-btn:active{
+  transform:scale(.97);
+}
+
+@media (hover:hover) and (pointer:fine){
+
+  .support-fab-btn:hover{
+    filter:brightness(1.04);
+  }
+
+}
+
+.support-fab-btn svg{
+  display:block;
+}
+
+.support-fab-btn svg.support-fab-icon-close{
+  display:none;
+}
+
+.support-fab-wrap.open .support-fab-icon-default{
+  display:none;
+}
+
+.support-fab-wrap.open .support-fab-icon-close{
+  display:block;
+}
+
+.support-fab-panel{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  max-width:250px;
+  background:#ffffff;
+  border-radius:14px;
+  box-shadow:0 8px 28px rgba(0,0,0,.18);
+  padding:10px 12px;
+  cursor:pointer;
+  color:inherit;
+  text-decoration:none;
+  transform:scale(.9) translateY(6px);
+  opacity:0;
+  pointer-events:none;
+  transform-origin:bottom right;
+  transition:transform .2s ease, opacity .2s ease;
+}
+
+.support-fab-wrap.open .support-fab-panel{
+  transform:scale(1) translateY(0);
+  opacity:1;
+  pointer-events:auto;
+}
+
+.support-fab-panel-icon{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:#eaf0ff;
+  color:#3461fd;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+.support-fab-panel-text{
+  min-width:0;
+  flex:1 1 auto;
+  display:flex;
+  flex-direction:column;
+  gap:1px;
+}
+
+.support-fab-panel-title{
+  font-size:11px;
+  font-weight:700;
+  color:#111;
+}
+
+.support-fab-panel-sub{
+  font-size:9px;
+  color:#777;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.support-fab-panel-chevron{
+  color:#b0b0b0;
+  flex-shrink:0;
+}
+
+@media (min-width:600px){
+
+  .support-fab-wrap{
+    right:22px;
+    bottom:22px;
+  }
+
+  .support-fab-btn{
+    width:58px;
+    height:58px;
+  }
+
+  .support-fab-panel{
+    max-width:280px;
+    padding:12px 14px;
+    border-radius:16px;
+  }
+
+  .support-fab-panel-icon{
+    width:40px;
+    height:40px;
+  }
+
+  .support-fab-panel-title{
+    font-size:13px;
+  }
+
+  .support-fab-panel-sub{
+    font-size:11px;
+  }
+
+}
+
+/* =========================================================
+   DARK MODE (automatic, follows system/browser preference)
+   ========================================================= */
+
+@media (prefers-color-scheme: dark){
+
+  body{
+    background:#0f1113;
+    color:#e9e9ec;
+  }
+
+  .notice-banner{
+    background:#3a2f0c;
+    border-color:#5c4b12;
+    color:#f3d873;
+  }
+
+  .load-error-overlay{
+    background:rgba(0,0,0,.5);
+  }
+
+  .load-error-card{
+    background:#1c1e21;
+    box-shadow:
+      0 4px 16px rgba(0,0,0,.3),
+      0 20px 48px rgba(0,0,0,.4);
+  }
+
+  .load-error-icon{
+    background:#3a1712;
+    color:#ffb4a8;
+  }
+
+  .load-error-title{
+    color:#f2f2f4;
+  }
+
+  .load-error-message{
+    color:#a3a3a9;
+  }
+
+  .load-error-retry{
+    background:#ffb4a8;
+    color:#3a1712;
+  }
+
+  .toast{
+    background:rgba(30,30,33,.8);
+    color:#f2f2f4;
+    box-shadow:
+      0 2px 6px rgba(0,0,0,.3),
+      0 14px 30px rgba(0,0,0,.45);
+  }
+
+  .toast-text{
+    color:#b8b9be;
+  }
+
+  .user-card-alert{
+    color:#9a9da3;
+  }
+
+  .user-card-alert-tip{
+    background:#e9e9ec;
+    color:#1f2024;
+    box-shadow:
+      0 2px 6px rgba(0,0,0,.3),
+      0 10px 24px rgba(0,0,0,.4);
+  }
+
+  .user-card-alert-tip::before{
+    background:#e9e9ec;
+  }
+
+  .card{
+    background:#1a1c20;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,.35),
+      0 8px 20px rgba(0,0,0,.45);
+  }
+
+  .copy-as-menu{
+    background:#1f2126;
+    border-color:#34363d;
+    box-shadow:
+      0 4px 12px rgba(0,0,0,.3),
+      0 12px 28px rgba(0,0,0,.45);
+  }
+
+  .copy-as-item{
+    color:#e9e9ec;
+  }
+
+  .copy-as-item:active{
+    background:#2a2c32;
+  }
+
+  .copy-as-item.copied{
+    color:#7ee08c;
+    background:rgba(126,224,140,.12);
+  }
+
+  .copy-as-item.copy-failed{
+    color:#ff8b84;
+    background:rgba(255,139,132,.12);
+  }
+
+  h1{
+    color:#f2f2f4;
+  }
+
+  .user-status-label,
+  .user-created-label,
+  .user-username-label{
+    color:#8f8f96;
+  }
+
+  .user-created-value,
+  .user-username-value{
+    color:#f2f2f4;
+  }
+
+  .btn{
+    color:#d6d6da;
+    background:#26282e;
+    border-color:#34363d;
+  }
+
+  .btn:active{
+    background:#34363d;
+  }
+
+  .btn.copied{
+    background:#123a20;
+    border-color:#3fb950;
+    color:#5fd97e;
+  }
+
+  .btn.copy-failed{
+    background:#3a1616;
+    border-color:#e0524a;
+    color:#ff8b84;
+  }
+
+  .link-text{
+    color:#c7c7cc;
+  }
+
+  .sub-link-text{
+    color:#8fb0ff;
+  }
+
+  .sub-link-badge{
+    color:#8fb0ff;
+    background:#1c2333;
+    border-color:#2c3a5a;
+  }
+
+  ul.links li:hover{
+    background:#212328;
+  }
+
+  .du-title{
+    color:#f2f2f4;
+  }
+
+  .du-subtitle,
+  .du-of-limit,
+  .du-remaining-label,
+  .du-reset-label,
+  .du-conn-label,
+  .du-days-hero-label,
+  .usage-headline-label,
+  .usage-stat-label,
+  .usage-peak,
+  .usage-empty,
+  .app-desc,
+  .du-conn-hint,
+  .qr-inline-label,
+  .support-fab-panel-sub{
+    color:#8f8f96;
+  }
+
+  .du-used-value,
+  .du-remaining-value,
+  .du-reset-value,
+  .du-conn-value,
+  .du-days-hero-value,
+  .usage-stat-value,
+  .usage-peak strong,
+  .app-name,
+  .support-fab-panel-title{
+    color:#f2f2f4;
+  }
+
+  .du-ring-bg{
+    stroke:#3a3d44;
+  }
+
+  .du-ring-label{
+    color:#f2f2f4;
+  }
+
+  .du-footer{
+    border-top-color:#2a2c32;
+  }
+
+  .du-conn-icon-wrap,
+  .du-reset-icon-wrap{
+    color:#9a9aa2;
+  }
+
+  .usage-range-btn{
+    background:#26282e;
+    border-color:#34363d;
+    color:#c7c7cc;
+  }
+
+  .usage-range-btn.active{
+    background:#3f8cff;
+    border-color:#3f8cff;
+    color:#fff;
+  }
+
+  .usage-grid-line{
+    stroke:#c7c7cc;
+  }
+
+  .usage-day-label{
+    fill:#8f8f96;
+  }
+
+  .app-item{
+    border-top-color:#2a2c32;
+  }
+
+  .app-actions a{
+    background:#26282e;
+    border-color:#34363d;
+    color:#e9e9ec;
+  }
+
+  .app-actions a.im{
+    background:#3f8cff;
+    border-color:#3f8cff;
+    color:#fff;
+  }
+
+  .app-item img{
+    background:#26282e;
+  }
+
+  .qr-inline-box{
+    background:#1f2126;
+    border-color:#34363d;
+  }
+
+  .qr-inline-box #qrInlineBox img,
+  .qr-inline-box #qrInlineBox canvas{
+    background:#fff;
+    border-radius:6px;
+  }
+
+  .qr-inline-close{
+    background:#26282e;
+    border-color:#34363d;
+    color:#e9e9ec;
+  }
+
+  ul.links li.active-qr{
+    background:#152238;
+  }
+
+  .support-fab-panel{
+    background:#1a1c20;
+    box-shadow:0 8px 28px rgba(0,0,0,.5);
+  }
+
+  .support-fab-panel-icon{
+    background:#152238;
+    color:#6ea2ff;
+  }
+
+  .support-fab-panel-chevron{
+    color:#5c5c63;
+  }
+
+  .du-page-dot{
+    background:#34363d;
+  }
+
+  .du-page-dot.active{
+    background:#8f8f96;
+  }
+
+  .du-swipe-hint{
+    color:#6f7278;
+  }
+
+  .badge{
+    background:rgba(63,185,80,.22);
+    color:#7ee08c;
+  }
+
+  .badge.expired{
+    background:rgba(224,82,74,.22);
+    color:#ff8b84;
+  }
+
+  .badge.disabled{
+    background:rgba(138,138,138,.22);
+    color:#b7b7bd;
+  }
+
+  .badge.on-hold{
+    background:rgba(142,68,173,.25);
+    color:#d19aec;
+  }
+
+  ul.links li::before{
+    color:#c7c7cc;
+  }
+
+  .usage-chart-axis{
+    color:#8f8f96;
+  }
+
+}
+
+.user-card-alert{
+  cursor:pointer;
+}
+
+.info-modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(20,20,22,.32);
+  -webkit-backdrop-filter:blur(6px);
+  backdrop-filter:blur(6px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:50;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:
+    opacity .18s ease,
+    visibility 0s linear .18s;
+}
+
+.info-modal-overlay.open{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transition:
+    opacity .18s ease,
+    visibility 0s linear 0s;
+}
+
+.info-modal{
+  position:relative;
+  background:#ffffff;
+  border-radius:14px;
+  width:100%;
+  max-width:300px;
+  max-height:80vh;
+  display:flex;
+  flex-direction:column;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,.10),
+    0 20px 48px rgba(0,0,0,.18);
+  transform:translateY(6px) scale(.98);
+  transition:transform .18s ease;
+}
+
+.info-modal-overlay.open .info-modal{
+  transform:translateY(0) scale(1);
+}
+
+.info-modal-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+  padding:14px 30px 10px 14px;
+}
+
+.info-modal-body{
+  overflow-y:auto;
+  padding:0 14px 16px;
+}
+
+.info-modal-title{
+  font-size:11px;
+  font-weight:700;
+  color:#111;
+  margin:0;
+}
+
+.info-modal-close{
+  position:absolute;
+  top:-8px;
+  right:-8px;
+  z-index:2;
+  flex-shrink:0;
+  width:22px;
+  height:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid #dcdcdc;
+  background:#eeeeee;
+  color:#333;
+  border-radius:50%;
+  cursor:pointer;
+  padding:0;
+  box-shadow:0 2px 6px rgba(0,0,0,.15);
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.info-modal-close svg{
+  width:10px;
+  height:10px;
+  flex-shrink:0;
+}
+
+.info-modal-close:active{
+  background:#e0e0e0;
+  transform:scale(.92);
+}
+
+.info-modal-section{
+  margin-bottom:10px;
+}
+
+.info-modal-section:last-child{
+  margin-bottom:0;
+}
+
+.info-modal-label{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  font-size:8px;
+  font-weight:700;
+  color:#666;
+  text-transform:uppercase;
+  letter-spacing:.02em;
+  margin-bottom:4px;
+}
+
+.info-modal-label svg{
+  flex-shrink:0;
+  color:#8a8d93;
+}
+
+.info-modal-value{
+  font-size:9px;
+  line-height:1.5;
+  color:#222;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+.info-modal-value.empty{
+  color:#999;
+  font-style:italic;
+}
+
+.info-modal-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  background:#eef1ff;
+  color:#3461fd;
+  font-size:8px;
+  font-weight:700;
+  padding:3px 8px;
+  border-radius:99px;
+  text-transform:capitalize;
+}
+
+@media (prefers-color-scheme: dark){
+
+  .info-modal-overlay{
+    background:rgba(0,0,0,.55);
+  }
+
+  .info-modal{
+    background:#1a1c20;
+    box-shadow:
+      0 4px 16px rgba(0,0,0,.4),
+      0 20px 48px rgba(0,0,0,.55);
+  }
+
+  .info-modal-title{
+    color:#f2f2f4;
+  }
+
+  .info-modal-close{
+    background:#26282e;
+    color:#d6d6da;
+  }
+
+  .info-modal-close:active{
+    background:#34363d;
+  }
+
+  .info-modal-label{
+    color:#8f8f96;
+  }
+
+  .info-modal-label svg{
+    color:#9a9da3;
+  }
+
+  .info-modal-value{
+    color:#e9e9ec;
+  }
+
+  .info-modal-value.empty{
+    color:#75757c;
+  }
+
+  .info-modal-badge{
+    background:rgba(63,140,255,.18);
+    color:#7fb2ff;
+  }
+
+}
 </style>
 </head>
 
@@ -995,131 +3057,137 @@ li.qr-row{
 
   <div class="layout">
 
-    <!-- =====================================================
-         LEFT
-         ===================================================== -->
-
     <div class="col col-main">
 
-      <!-- USER INFORMATION -->
+      <div class="info-rings-row">
 
-      <div class="card">
+        <div class="card user-card">
 
-        <div class="user-card-top">
+          <span
+            class="user-card-alert"
+            id="userInfoAlert"
+            role="button"
+            tabindex="0"
+            aria-haspopup="dialog"
+            aria-label="More info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9.25"/>
+              <path d="M12 7.8v5.4"/>
+              <path d="M12 16.4h.01"/>
+            </svg>
+            <span class="user-card-alert-tip" id="userInfoAlertTip">More info</span>
+          </span>
 
-          <div>
+          <div class="user-card-head">
 
-            <h1>User Information</h1>
+            <div class="user-card-title">
 
-            <p class="field">
-              Username:
-              <span id="unameOut">—</span>
-            </p>
+              <h1>More Info</h1>
 
-            <p class="field">
-              Status:
-              <span
-                class="badge"
-                id="statusBadge">
-                active
-              </span>
-            </p>
+              <div class="user-username-row">
 
-            <p class="field">
-              Data Limit:
-              <span id="limitOut">—</span>
-            </p>
+                <span class="user-username-label">Username:</span>
 
-            <p class="field">
-              Data Used:
-              <span id="usedOut">—</span>
-            </p>
+                <span
+                  class="user-username-value ph-loading"
+                  id="unameOut">
+                  Loading
+                </span>
 
-            <p class="field">
-              Expiration Date:
-              <span id="expireOut">—</span>
-            </p>
-
-          </div>
-
-          <div class="usage-rings">
-
-            <!-- DATA RING -->
-
-            <div class="ring-block">
-
-              <div class="usage-ring-wrap">
-
-                <svg
-                  viewBox="0 0 36 36"
-                  class="usage-ring">
-
-                  <path
-                    class="ring-bg"
-                    d="M18 2.0845
-                       a 15.9155 15.9155 0 0 1 0 31.831
-                       a 15.9155 15.9155 0 0 1 0 -31.831" />
-
-                  <path
-                    class="ring-fg"
-                    id="usageRingFg"
-                    stroke-dasharray="0,100"
-                    d="M18 2.0845
-                       a 15.9155 15.9155 0 0 1 0 31.831
-                       a 15.9155 15.9155 0 0 1 0 -31.831" />
-
-                </svg>
-
-                <div
-                  class="usage-ring-label"
-                  id="usageRingLabel">
-                  0%
-                </div>
+                <button
+                  type="button"
+                  class="btn"
+                  id="unameCopyBtn"
+                  aria-label="Copy username">
+                  <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="12" height="12" rx="2"/>
+                    <path d="M5 15V5a2 2 0 0 1 2-2h10"/>
+                  </svg>
+                  <span class="btn-label">Copy</span>
+                </button>
 
               </div>
 
-              <div class="ring-caption">
-                Data
+              <div class="user-created-row">
+
+                <span class="user-created-label">Created:</span>
+
+                <span
+                  class="user-created-value ph-loading"
+                  id="createdAtOut">
+                  Loading
+                </span>
+
+              </div>
+
+              <div class="user-status-row">
+
+                <span class="user-status-label">Status:</span>
+
+                <span
+                  class="badge"
+                  id="statusBadge">
+                  active
+                </span>
+
               </div>
 
             </div>
 
-            <!-- DAYS RING -->
+          </div>
 
-            <div class="ring-block">
+          <div class="du-footer">
 
-              <div class="usage-ring-wrap">
+            <div class="du-conn-row">
 
-                <svg
-                  viewBox="0 0 36 36"
-                  class="usage-ring">
-
-                  <path
-                    class="ring-bg"
-                    d="M18 2.0845
-                       a 15.9155 15.9155 0 0 1 0 31.831
-                       a 15.9155 15.9155 0 0 1 0 -31.831" />
-
-                  <path
-                    class="ring-fg"
-                    id="daysRingFg"
-                    stroke-dasharray="0,100"
-                    d="M18 2.0845
-                       a 15.9155 15.9155 0 0 1 0 31.831
-                       a 15.9155 15.9155 0 0 1 0 -31.831" />
-
+              <div class="du-conn-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/>
+                  <path d="M14 13.12c0 2.38 0 6.38-1 8.88"/>
+                  <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/>
+                  <path d="M2 12a10 10 0 0 1 18-6"/>
+                  <path d="M2 16h.01"/>
+                  <path d="M21.8 16c.2-2 .131-5.354 0-6"/>
+                  <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/>
+                  <path d="M8.65 22c.21-.66.45-1.32.57-2"/>
+                  <path d="M9 6.8a6 6 0 0 1 9 5.2v2"/>
                 </svg>
-
-                <div
-                  class="usage-ring-label"
-                  id="daysRingLabel">
-                  ∞
-                </div>
-
               </div>
 
-              <div class="ring-caption">
-                Days
+              <div class="du-conn-text">
+                <div class="du-conn-top-row">
+                  <span class="du-conn-label">HWID</span>
+                </div>
+                <div class="du-conn-value ph-loading" id="hwidOut">Loading</div>
+              </div>
+
+            </div>
+
+            <div class="du-conn-row">
+
+              <div class="du-conn-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10.5"/>
+                  <path d="M12 6.5V12h5.5"/>
+                </svg>
+              </div>
+
+              <div class="du-conn-text">
+
+                <div class="du-conn-top-row">
+                  <span class="du-conn-label">Last Connection</span>
+                  <span class="badge disabled ph-loading" id="duStatusBadge">Loading</span>
+                </div>
+
+                <div class="du-conn-value ph-loading" id="duLastConnection">Loading</div>
+
+                <div class="du-conn-hint" id="duConnHint" style="display:none;">
+                  <svg viewBox="0 0 24 24" width="6" height="6" fill="currentColor" stroke="none">
+                    <path d="M13 2 4 14h6l-1 8 9-12h-6z"/>
+                  </svg>
+                  <span>Connection is active</span>
+                </div>
+
               </div>
 
             </div>
@@ -1128,11 +3196,147 @@ li.qr-row{
 
         </div>
 
-      </div>
+        <div class="card data-used-card" id="dataUsedCard">
 
-      <!-- ===================================================
-           DATA USAGE
-           =================================================== -->
+          <div class="du-page-viewport">
+
+            <div class="du-page-track" id="duPageTrack">
+
+              <div class="du-page">
+
+                <div class="du-head">
+
+                  <div class="du-head-text">
+                    <div class="du-title">Data Limit</div>
+                    <div class="du-subtitle">Your network consumption</div>
+                  </div>
+
+                </div>
+
+                <div class="du-body">
+
+                  <div class="du-ring-wrap">
+
+                    <svg viewBox="0 0 36 36" class="du-ring">
+
+                      <defs>
+                        <linearGradient id="duRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#3fb950"/>
+                          <stop offset="100%" stop-color="#a4c639"/>
+                        </linearGradient>
+                      </defs>
+
+                      <path class="du-ring-bg" d="M10.0423 31.7874 A 15.9155 15.9155 0 1 1 25.9578 31.7874"/>
+                      <path class="du-ring-fg" id="duRingFg" stroke-dasharray="0,100" d="M10.0423 31.7874 A 15.9155 15.9155 0 1 1 25.9578 31.7874"/>
+                      <circle class="du-ring-dot" id="duRingDot" cx="10.0423" cy="31.7874" r="2.1" style="opacity:0;"/>
+
+                    </svg>
+
+                    <div class="du-ring-label" id="duRingLabel">0%</div>
+
+                  </div>
+
+                  <div class="du-stats">
+
+                    <div class="du-used-value ph-loading" id="duUsedValue">Loading</div>
+                    <div class="du-of-limit ph-loading" id="duOfLimit">Loading</div>
+
+                    <div class="du-divider"></div>
+
+                    <div class="du-remaining-row">
+                      <span class="du-remaining-dot" id="duRemainingDot"></span>
+                      <div class="du-remaining-col">
+                        <div class="du-remaining-value ph-loading" id="duRemainingValue">Loading</div>
+                        <div class="du-remaining-label">remaining</div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <div class="du-conn-row dl-expire-row" id="duTotalRow">
+
+                  <div class="du-conn-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                      <path d="M3 5v14a9 3 0 0 0 18 0V5"/>
+                      <path d="M3 12a9 3 0 0 0 18 0"/>
+                    </svg>
+                  </div>
+
+                  <div class="du-conn-text">
+                    <div class="du-conn-top-row">
+                      <span class="du-conn-label">Data Limit</span>
+                    </div>
+                    <div class="du-conn-value ph-loading" id="duTotalValue">Loading</div>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div class="du-page">
+
+                <div class="du-head">
+
+                  <div class="du-head-text">
+                    <div class="du-title">Expiry Date</div>
+                    <div class="du-subtitle">Until your plan expires</div>
+                  </div>
+
+                </div>
+
+                <div class="du-days-hero" id="dlDaysRow">
+
+                  <div class="du-days-hero-value ph-loading" id="dlDaysLeftValue">Loading</div>
+                  <div class="du-days-hero-label">
+                    <span>Days</span>
+                    <span>Remaining</span>
+                  </div>
+
+                </div>
+
+                <div class="du-conn-row dl-expire-row" id="dlExpireRow">
+
+                  <div class="du-conn-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="17" rx="2"/>
+                      <path d="M3 9h18"/>
+                      <path d="M8 2v4M16 2v4"/>
+                    </svg>
+                  </div>
+
+                  <div class="du-conn-text">
+                    <div class="du-conn-top-row">
+                      <span class="du-conn-label">Expiration Date</span>
+                    </div>
+                    <div class="du-conn-value ph-loading" id="dlExpireValue">Loading</div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+        <div class="du-page-dots" id="duPageDots" aria-hidden="true">
+          <span class="du-swipe-hint" id="duSwipeHint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 9l5-5 5 5"/>
+              <path d="M7 15l5 5 5-5"/>
+            </svg>
+          </span>
+          <span class="du-page-dot active" data-page="0"></span>
+          <span class="du-page-dot" data-page="1"></span>
+        </div>
+
+      </div>
 
       <div
         class="card"
@@ -1149,9 +3353,9 @@ li.qr-row{
           <div class="usage-headline-item">
 
             <div
-              class="usage-headline-value"
+              class="usage-headline-value ph-loading"
               id="usageMonthValue">
-              —
+              Loading
             </div>
 
             <div class="usage-headline-label">
@@ -1163,9 +3367,9 @@ li.qr-row{
           <div class="usage-headline-item">
 
             <div
-              class="usage-headline-value"
+              class="usage-headline-value ph-loading"
               id="usageTotalValue">
-              —
+              Loading
             </div>
 
             <div class="usage-headline-label">
@@ -1216,9 +3420,9 @@ li.qr-row{
           <div class="usage-stat">
 
             <div
-              class="usage-stat-value"
+              class="usage-stat-value ph-loading"
               id="usageAverage">
-              —
+              Loading
             </div>
 
             <div
@@ -1232,9 +3436,9 @@ li.qr-row{
           <div class="usage-stat">
 
             <div
-              class="usage-stat-value"
+              class="usage-stat-value ph-loading"
               id="usagePeak">
-              —
+              Loading
             </div>
 
             <div class="usage-stat-label">
@@ -1244,8 +3448,6 @@ li.qr-row{
           </div>
 
         </div>
-
-        <!-- LINE CHART -->
 
         <div class="line-chart-wrap">
 
@@ -1315,8 +3517,7 @@ li.qr-row{
               class="usage-tooltip"
               id="usageTooltip"
               role="status"
-              aria-live="polite"
-              style="display:none;">
+              aria-live="polite">
             </div>
 
           </div>
@@ -1325,12 +3526,12 @@ li.qr-row{
 
         <div class="usage-chart-axis">
 
-          <span id="usageAxisStart">
-            —
+          <span id="usageAxisStart" class="ph-loading">
+            Loading
           </span>
 
-          <span id="usageAxisEnd">
-            —
+          <span id="usageAxisEnd" class="ph-loading">
+            Loading
           </span>
 
         </div>
@@ -1350,13 +3551,7 @@ li.qr-row{
 
     </div>
 
-    <!-- =====================================================
-         RIGHT
-         ===================================================== -->
-
     <div class="col col-side">
-
-      <!-- LINKS -->
 
       <div class="card">
 
@@ -1366,21 +3561,50 @@ li.qr-row{
             class="links-toggle"
             id="linksToggle">
 
-            Links
+            Access Links
             <span id="linksChevron">
               ▾
             </span>
 
           </span>
 
-          <button
-            class="btn btn-copy-all"
-            id="copyAllBtn"
-            aria-label="Copy all subscription links">
+          <div class="copy-as-wrap" id="copyAsWrap">
 
-            Copy All
+            <button
+              class="btn btn-copy-all"
+              id="copyAsBtn"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-label="Copy subscription as">
 
-          </button>
+              <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="12" height="12" rx="2"/>
+                <path d="M5 15V5a2 2 0 0 1 2-2h10"/>
+              </svg>
+              <span class="btn-label">Copy as</span>
+              <svg viewBox="0 0 24 24" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+
+            </button>
+
+            <div
+              class="copy-as-menu"
+              id="copyAsMenu"
+              role="menu">
+
+              <button class="copy-as-item" type="button" data-format="links" role="menuitem"><span class="btn-label">Links (raw)</span></button>
+              <button class="copy-as-item" type="button" data-format="links_base64" role="menuitem"><span class="btn-label">Links (base64)</span></button>
+              <button class="copy-as-item" type="button" data-format="xray" role="menuitem"><span class="btn-label">Xray / V2Ray</span></button>
+              <button class="copy-as-item" type="button" data-format="sing_box" role="menuitem"><span class="btn-label">Sing-box</span></button>
+              <button class="copy-as-item" type="button" data-format="clash" role="menuitem"><span class="btn-label">Clash</span></button>
+              <button class="copy-as-item" type="button" data-format="clash_meta" role="menuitem"><span class="btn-label">Clash Meta (Mihomo)</span></button>
+              <button class="copy-as-item" type="button" data-format="wireguard" role="menuitem"><span class="btn-label">WireGuard</span></button>
+              <button class="copy-as-item" type="button" data-format="outline" role="menuitem"><span class="btn-label">Outline</span></button>
+
+            </div>
+
+          </div>
 
         </h2>
 
@@ -1390,8 +3614,6 @@ li.qr-row{
         </ul>
 
       </div>
-
-      <!-- APPS -->
 
       <div
         class="card"
@@ -1412,11 +3634,240 @@ li.qr-row{
 
 </div>
 
+<div class="support-fab-wrap" id="supportFabWrap">
+
+  <a
+    class="support-fab-panel"
+    id="supportFabLink"
+    href="#"
+    target="_blank"
+    rel="noopener noreferrer">
+
+    <span class="support-fab-panel-icon">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+        <path d="M4 11.2C4 6.7 7.58 3 12 3s8 3.7 8 8.2" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+        <rect x="2.5" y="10.4" width="4.6" height="7.8" rx="2.3" fill="currentColor"/>
+        <rect x="16.9" y="10.4" width="4.6" height="7.8" rx="2.3" fill="currentColor"/>
+        <path d="M19.2 18v0.9a2.4 2.4 0 0 1-2.4 2.4h-2.4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <rect x="11.7" y="20.1" width="4.1" height="2.9" rx="1.45" fill="currentColor"/>
+      </svg>
+    </span>
+
+    <span class="support-fab-panel-text">
+      <span class="support-fab-panel-title">Need help?</span>
+      <span class="support-fab-panel-sub" id="supportFabSub">Contact support</span>
+    </span>
+
+    <svg class="support-fab-panel-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 6l6 6-6 6"/>
+    </svg>
+
+  </a>
+
+  <button
+    type="button"
+    class="support-fab-btn"
+    id="supportFabBtn"
+    aria-label="Need help?"
+    aria-expanded="false">
+
+    <svg class="support-fab-icon-default" viewBox="0 0 24 24" width="22" height="22" fill="none">
+      <path d="M4 11.2C4 6.7 7.58 3 12 3s8 3.7 8 8.2" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+      <rect x="2.5" y="10.4" width="4.6" height="7.8" rx="2.3" fill="currentColor"/>
+      <rect x="16.9" y="10.4" width="4.6" height="7.8" rx="2.3" fill="currentColor"/>
+      <path d="M19.2 18v0.9a2.4 2.4 0 0 1-2.4 2.4h-2.4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <rect x="11.7" y="20.1" width="4.1" height="2.9" rx="1.45" fill="currentColor"/>
+    </svg>
+
+    <svg class="support-fab-icon-close" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 6l12 12M18 6L6 18"/>
+    </svg>
+
+  </button>
+
+</div>
+
+<div class="toast" id="refreshToast" role="status" aria-live="polite">
+  <div class="toast-icon" id="refreshToastIcon"></div>
+  <div class="toast-body">
+    <div class="toast-title" id="refreshToastTitle"></div>
+    <div class="toast-text" id="refreshToastText"></div>
+  </div>
+</div>
+
+<div
+  class="load-error-overlay"
+  id="loadErrorOverlay"
+  role="alertdialog"
+  aria-modal="true"
+  aria-labelledby="loadErrorTitle">
+
+  <div class="load-error-card">
+
+    <div class="load-error-icon">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 9v4"/>
+        <path d="M12 17h.01"/>
+        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/>
+      </svg>
+    </div>
+
+    <h3 class="load-error-title" id="loadErrorTitle">Couldn't load your subscription</h3>
+
+    <p class="load-error-message">Please check your connection and try again.</p>
+
+    <button type="button" class="load-error-retry" id="loadErrorRetryBtn">Retry</button>
+
+  </div>
+
+</div>
+
+<div
+  class="info-modal-overlay"
+  id="userInfoModalOverlay"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="userInfoModalTitle">
+
+  <div class="info-modal">
+
+    <button
+      type="button"
+      class="info-modal-close"
+      id="userInfoModalCloseBtn"
+      aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+
+    <div class="info-modal-head">
+
+      <h3 class="info-modal-title" id="userInfoModalTitle">More Information</h3>
+
+    </div>
+
+    <div class="info-modal-body">
+
+    <div class="info-modal-section">
+
+      <div class="info-modal-label">
+        <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17.5 6.5A8 8 0 0 0 4.5 10"/>
+          <path d="M4 4v5h5"/>
+          <path d="M6.5 17.5A8 8 0 0 0 19.5 14"/>
+          <path d="M20 20v-5h-5"/>
+        </svg>
+        Periodic Usage Reset
+      </div>
+
+      <div class="info-modal-value" id="userInfoModalReset">—</div>
+
+    </div>
+
+    <div class="info-modal-section">
+
+      <div class="info-modal-label">
+        <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M3 12h18"/>
+          <path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/>
+        </svg>
+        Last Connected IP
+      </div>
+
+      <div class="info-modal-value" id="userInfoModalIp">—</div>
+
+    </div>
+
+    <div class="info-modal-section" id="userInfoModalNextPlanSection">
+
+      <div class="info-modal-label">
+        <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 7h10M4 12h7M4 17h4"/>
+          <path d="M16 9l4 4-4 4"/>
+        </svg>
+        Next Plan
+      </div>
+
+      <div class="info-modal-value" id="userInfoModalNextPlan">—</div>
+
+    </div>
+
+    </div>
+
+  </div>
+
+</div>
+
 <script>
 
-/* =========================================================
-   SUBSCRIPTION URL
-   ========================================================= */
+(function(){
+
+  document.addEventListener(
+    'touchmove',
+    function(e){
+
+      if(
+        e.touches &&
+        e.touches.length > 1
+      ){
+
+        e.preventDefault();
+
+      }
+
+    },
+    { passive: false }
+  );
+
+  let lastTouchEnd = 0;
+
+  document.addEventListener(
+    'touchend',
+    function(e){
+
+      const now =
+        Date.now();
+
+      const isInteractive =
+        e.target &&
+        e.target.closest &&
+        e.target.closest(
+          'button, a, input, select, textarea, [role="button"], [role="menuitem"], .btn, .du-page-dot'
+        );
+
+      if(
+        !isInteractive &&
+        now - lastTouchEnd <= 300
+      ){
+
+        e.preventDefault();
+
+      }
+
+      lastTouchEnd = now;
+
+    },
+    { passive: false }
+  );
+
+  document.addEventListener(
+    'gesturestart',
+    function(e){ e.preventDefault(); }
+  );
+
+  document.addEventListener(
+    'gesturechange',
+    function(e){ e.preventDefault(); }
+  );
+
+  document.addEventListener(
+    'gestureend',
+    function(e){ e.preventDefault(); }
+  );
+
+})();
 
 function subUrl(){
 
@@ -1427,10 +3878,6 @@ function subUrl(){
          );
 
 }
-
-/* =========================================================
-   BYTE FORMAT
-   ========================================================= */
 
 function formatBytes(n){
 
@@ -1486,9 +3933,239 @@ function formatBytes(n){
 
 }
 
-/* =========================================================
-   TIMESTAMP
-   ========================================================= */
+function prefersReducedMotion(){
+
+  return (
+    window.matchMedia &&
+    window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
+  );
+
+}
+
+function revealField(
+  el
+){
+
+  if(
+    !el ||
+    prefersReducedMotion()
+  ){
+
+    return;
+
+  }
+
+  el.classList.remove(
+    'field-fade-in'
+  );
+
+  void el.offsetWidth;
+
+  el.classList.add(
+    'field-fade-in'
+  );
+
+}
+
+function revealBadge(
+  el
+){
+
+  if(
+    !el ||
+    prefersReducedMotion()
+  ){
+
+    return;
+
+  }
+
+  el.classList.remove(
+    'badge-pop'
+  );
+
+  void el.offsetWidth;
+
+  el.classList.add(
+    'badge-pop'
+  );
+
+}
+
+function staggerReveal(
+  items,
+  stepMs
+){
+
+  if(
+    prefersReducedMotion()
+  ){
+
+    return;
+
+  }
+
+  const step =
+    stepMs ||
+    30;
+
+  Array.from(
+    items ||
+    []
+  ).forEach(
+    (
+      el,
+      i
+    ) => {
+
+      el.classList.remove(
+        'stagger-enter'
+      );
+
+      void el.offsetWidth;
+
+      el.style.animationDelay =
+        (
+          i * step
+        ) +
+        'ms';
+
+      el.classList.add(
+        'stagger-enter'
+      );
+
+    }
+  );
+
+}
+
+function animateStatValue(
+  el,
+  text
+){
+
+  if(!el){
+
+    return;
+
+  }
+
+  if(
+    prefersReducedMotion()
+  ){
+
+    el.textContent =
+      text;
+
+    return;
+
+  }
+
+  const match =
+    /^(-?\d+(?:\.\d+)?)\s*([A-Za-z]+)$/.exec(
+      String(text).trim()
+    );
+
+  if(!match){
+
+    el.textContent =
+      text;
+
+    return;
+
+  }
+
+  const target =
+    parseFloat(
+      match[1]
+    );
+
+  const unit =
+    match[2];
+
+  const decimals =
+    (
+      match[1].split('.')[1] ||
+      ''
+    ).length;
+
+  if(!isFinite(target)){
+
+    el.textContent =
+      text;
+
+    return;
+
+  }
+
+  const duration =
+    700;
+
+  const startTime =
+    performance.now();
+
+  const runId =
+    (el.__animRunId =
+      (el.__animRunId || 0) + 1);
+
+  function tick(
+    now
+  ){
+
+    if(
+      el.__animRunId !==
+      runId
+    ){
+
+      return;
+
+    }
+
+    const p =
+      Math.min(
+        1,
+        (
+          now - startTime
+        ) /
+        duration
+      );
+
+    const eased =
+      1 -
+      Math.pow(
+        1 - p,
+        3
+      );
+
+    el.textContent =
+      (
+        target * eased
+      ).toFixed(decimals) +
+      ' ' +
+      unit;
+
+    if(p < 1){
+
+      requestAnimationFrame(
+        tick
+      );
+
+    }else{
+
+      el.textContent =
+        text;
+
+    }
+
+  }
+
+  requestAnimationFrame(
+    tick
+  );
+
+}
 
 function timestampMs(v){
 
@@ -1527,10 +4204,6 @@ function timestampMs(v){
 
 }
 
-/* =========================================================
-   EXPIRATION
-   ========================================================= */
-
 function formatExpire(v){
 
   const ts =
@@ -1554,30 +4227,460 @@ function formatExpire(v){
 
 }
 
-/* =========================================================
-   DATA RING
-   ========================================================= */
+function formatDurationSeconds(sec){
 
-function updateUsageRing(
-  used,
-  limit
-){
+  if(
+    sec == null ||
+    isNaN(sec) ||
+    sec <= 0
+  ){
+
+    return null;
+
+  }
+
+  const days =
+    sec / 86400;
+
+  if(days >= 1){
+
+    const rounded =
+      Math.round(days);
+
+    return rounded +
+           (
+             rounded === 1
+               ? ' day'
+               : ' days'
+           );
+
+  }
+
+  const hours =
+    Math.round(sec / 3600);
+
+  return hours +
+         (
+           hours === 1
+             ? ' hour'
+             : ' hours'
+         );
+
+}
+
+function formatNextPlan(plan){
+
+  if(!plan){
+
+    return '';
+
+  }
+
+  const lines = [];
+
+  const dataLimit =
+    plan.data_limit;
+
+  lines.push(
+    'Data limit: ' +
+    (
+      dataLimit == null ||
+      dataLimit === 0
+        ? 'Unlimited'
+        : formatBytes(dataLimit)
+    )
+  );
+
+  const expireDuration =
+    formatDurationSeconds(
+      plan.expire
+    );
+
+  lines.push(
+    'Duration: ' +
+    (
+      expireDuration ||
+      'No expiry'
+    )
+  );
+
+  lines.push(
+    'Adds remaining traffic: ' +
+    (
+      plan.add_remaining_traffic
+        ? 'Yes'
+        : 'No'
+    )
+  );
+
+  return lines.join('\n');
+
+}
+
+function formatCreatedAt(ts){
+
+  const date =
+    new Date(ts);
+
+  const datePart =
+    date.toLocaleDateString(
+      'en-US',
+      {
+        year:'numeric',
+        month:'2-digit',
+        day:'2-digit'
+      }
+    );
+
+  const timePart =
+    date.toLocaleTimeString(
+      'en-US',
+      {
+        hour:'2-digit',
+        minute:'2-digit',
+        hour12:false
+      }
+    );
+
+  return datePart +
+         ' ' +
+         timePart;
+
+}
+
+const DATA_USED_ONLINE_WINDOW_MS = 2 * 60 * 1000;
+
+function formatLastConnection(v){
+
+  const ts =
+    timestampMs(v);
+
+  if(!ts){
+
+    return 'Never';
+
+  }
+
+  const date =
+    new Date(ts);
+
+  const datePart =
+    date.toLocaleDateString(
+      'en-US',
+      {
+        year:'numeric',
+        month:'short',
+        day:'numeric'
+      }
+    );
+
+  const timePart =
+    date.toLocaleTimeString(
+      'en-US',
+      {
+        hour:'2-digit',
+        minute:'2-digit',
+        hour12:false
+      }
+    );
+
+  return datePart +
+         ' • ' +
+         timePart;
+
+}
+
+const RING_START_DEG = 210;
+const RING_SWEEP_DEG = 300;
+const RING_ARC_LEN =
+  15.9155 *
+  (RING_SWEEP_DEG * Math.PI / 180);
+
+const SAFETY_COLOR_STOPS = [
+  { p: 0,   rgb: [229, 72, 77] },
+  { p: 25,  rgb: [245, 166, 35] },
+  { p: 50,  rgb: [240, 212, 58] },
+  { p: 75,  rgb: [164, 198, 57] },
+  { p: 100, rgb: [63, 185, 80] }
+];
+
+function safetyColor(safetyPct){
+
+  const pct =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        safetyPct
+      )
+    );
+
+  let lower =
+    SAFETY_COLOR_STOPS[0];
+
+  let upper =
+    SAFETY_COLOR_STOPS[
+      SAFETY_COLOR_STOPS.length - 1
+    ];
+
+  for(
+    let i = 0;
+    i < SAFETY_COLOR_STOPS.length - 1;
+    i++
+  ){
+
+    if(
+      pct >= SAFETY_COLOR_STOPS[i].p &&
+      pct <= SAFETY_COLOR_STOPS[i + 1].p
+    ){
+
+      lower =
+        SAFETY_COLOR_STOPS[i];
+
+      upper =
+        SAFETY_COLOR_STOPS[i + 1];
+
+      break;
+
+    }
+
+  }
+
+  const span =
+    (upper.p - lower.p) ||
+    1;
+
+  const t =
+    (pct - lower.p) /
+    span;
+
+  const r =
+    Math.round(
+      lower.rgb[0] +
+      (upper.rgb[0] - lower.rgb[0]) * t
+    );
+
+  const g =
+    Math.round(
+      lower.rgb[1] +
+      (upper.rgb[1] - lower.rgb[1]) * t
+    );
+
+  const b =
+    Math.round(
+      lower.rgb[2] +
+      (upper.rgb[2] - lower.rgb[2]) * t
+    );
+
+  return (
+    'rgb(' +
+    r + ',' +
+    g + ',' +
+    b +
+    ')'
+  );
+
+}
+
+function animateNumberText(el, finalText, duration){
+
+  if(!el) return;
+
+  duration = duration || 900;
+
+  const str = String(finalText);
+
+  const match =
+    str.match(
+      /^(-?\d+(?:\.\d+)?)/
+    );
+
+  if(!match){
+
+    el.textContent = str;
+
+    return;
+
+  }
+
+  const endNum =
+    parseFloat(
+      match[1]
+    );
+
+  const decimals =
+    match[1].includes('.')
+      ? match[1].split('.')[1].length
+      : 0;
+
+  const suffix =
+    str.slice(
+      match[1].length
+    );
+
+  const startTime =
+    (window.performance && performance.now)
+      ? performance.now()
+      : Date.now();
+
+  function step(now){
+
+    const elapsed =
+      now - startTime;
+
+    const progress =
+      Math.min(
+        1,
+        elapsed / duration
+      );
+
+    const eased =
+      1 - Math.pow(
+        1 - progress,
+        3
+      );
+
+    const current =
+      endNum * eased;
+
+    el.textContent =
+      current.toFixed(decimals) +
+      suffix;
+
+    if(progress < 1){
+
+      requestAnimationFrame(step);
+
+    }else{
+
+      el.textContent = str;
+
+    }
+
+  }
+
+  requestAnimationFrame(step);
+
+}
+
+function setDataUsedRingDot(pct){
+
+  const dot =
+    document.getElementById(
+      'duRingDot'
+    );
+
+  if(!dot) return;
+
+  if(!(pct > 0)){
+
+    dot.style.opacity =
+      '0';
+
+    return;
+
+  }
+
+  dot.style.opacity =
+    '1';
+
+  const r = 15.9155;
+
+  const theta =
+    (
+      RING_START_DEG +
+      (pct / 100) *
+      RING_SWEEP_DEG
+    ) *
+    Math.PI / 180;
+
+  const x =
+    18 +
+    r * Math.sin(theta);
+
+  const y =
+    18 -
+    r * Math.cos(theta);
+
+  dot.setAttribute(
+    'cx',
+    x.toFixed(2)
+  );
+
+  dot.setAttribute(
+    'cy',
+    y.toFixed(2)
+  );
+
+}
+
+function updateDataUsedCard(user, animate){
+
+  user = user || {};
 
   const fg =
     document.getElementById(
-      'usageRingFg'
+      'duRingFg'
     );
 
-  const label =
+  if(!fg) return;
+
+  const ringLabel =
     document.getElementById(
-      'usageRingLabel'
+      'duRingLabel'
     );
+
+  const usedValueEl =
+    document.getElementById(
+      'duUsedValue'
+    );
+
+  const ofLimitEl =
+    document.getElementById(
+      'duOfLimit'
+    );
+
+  const remainingValueEl =
+    document.getElementById(
+      'duRemainingValue'
+    );
+
+  const used =
+    Number(
+      user.used_traffic
+    ) || 0;
+
+  const limit =
+    Number(
+      user.data_limit
+    ) || 0;
+
+  if(animate){
+
+    animateNumberText(
+      usedValueEl,
+      formatBytes(used)
+    );
+
+  }else{
+
+    usedValueEl.textContent =
+      formatBytes(used);
+
+  }
 
   fg.classList.remove(
-    'ring-warn',
-    'ring-danger',
-    'ring-inf'
+    'inf'
   );
+
+  fg.classList.remove(
+    'danger'
+  );
+
+  const duDot =
+    document.getElementById(
+      'duRemainingDot'
+    );
 
   if(!limit){
 
@@ -1587,340 +4690,1488 @@ function updateUsageRing(
     );
 
     fg.classList.add(
-      'ring-inf'
+      'inf'
     );
 
-    label.textContent =
-      '∞';
+    fg.style.stroke =
+      '';
 
-    return;
+    if(duDot){
 
-  }
-
-  const pct =
-    Math.max(
-      0,
-      Math.min(
-        100,
-        (
-          used /
-          limit
-        ) *
-        100
-      )
-    );
-
-  fg.setAttribute(
-    'stroke-dasharray',
-    pct.toFixed(1) +
-    ',100'
-  );
-
-  if(pct >= 95){
-
-    fg.classList.add(
-      'ring-danger'
-    );
-
-  }else if(pct >= 80){
-
-    fg.classList.add(
-      'ring-warn'
-    );
-
-  }
-
-  label.textContent =
-    Math.round(pct) +
-    '%';
-
-}
-
-/* =========================================================
-   DAYS HELPERS
-   ========================================================= */
-
-function getSubscriptionStartMs(user){
-
-  if(
-    !user ||
-    typeof user !== 'object'
-  ){
-
-    return null;
-
-  }
-
-  const keys = [
-
-    'subscription_start',
-    'subscriptionStart',
-
-    'start_date',
-    'startDate',
-
-    'started_at',
-    'startedAt',
-
-    'created_at',
-    'createdAt',
-
-    'created'
-
-  ];
-
-  for(
-    const key of keys
-  ){
-
-    if(
-      user[key] != null
-    ){
-
-      const ts =
-        timestampMs(
-          user[key]
-        );
-
-      if(ts){
-
-        return ts;
-
-      }
+      duDot.style.background =
+        safetyColor(100);
 
     }
 
-  }
+    ringLabel.textContent =
+      '∞';
 
-  return null;
+    ringLabel.style.color =
+      '';
 
-}
+    setDataUsedRingDot(0);
 
-function getSubscriptionDurationDays(user){
+    ofLimitEl.textContent =
+      'Unlimited';
 
-  if(
-    !user ||
-    typeof user !== 'object'
-  ){
+    if(animate){
 
-    return null;
-
-  }
-
-  const durationKeys = [
-
-    'duration_days',
-    'durationDays',
-
-    'subscription_days',
-    'subscriptionDays',
-
-    'validity_days',
-    'validityDays',
-
-    'expire_days',
-    'expireDays'
-
-  ];
-
-  for(
-    const key of durationKeys
-  ){
-
-    const value =
-      Number(
-        user[key]
+      revealField(
+        ofLimitEl
       );
 
-    if(
-      isFinite(value) &&
-      value > 0
-    ){
-
-      return Math.ceil(value);
-
     }
 
-  }
-
-  const start =
-    getSubscriptionStartMs(
-      user
-    );
-
-  const expire =
-    timestampMs(
-      user.expire
-    );
-
-  if(
-    start &&
-    expire &&
-    expire > start
-  ){
-
-    return Math.max(
-      1,
-      Math.ceil(
-        (
-          expire -
-          start
-        ) /
-        86400000
-      )
-    );
-
-  }
-
-  return null;
-
-}
-
-/* =========================================================
-   DAYS RING
-   ========================================================= */
-
-function updateDaysRing(
-  expireValue
-){
-
-  const fg =
-    document.getElementById(
-      'daysRingFg'
-    );
-
-  const label =
-    document.getElementById(
-      'daysRingLabel'
-    );
-
-  fg.classList.remove(
-    'ring-warn',
-    'ring-danger',
-    'ring-inf'
-  );
-
-  const expireTs =
-    timestampMs(
-      expireValue
-    );
-
-  if(!expireTs){
-
-    fg.setAttribute(
-      'stroke-dasharray',
-      '100,100'
-    );
-
-    fg.classList.add(
-      'ring-inf'
-    );
-
-    label.textContent =
+    remainingValueEl.textContent =
       '∞';
 
-    return;
-
-  }
-
-  const user =
-    window.__pgUser || {};
-
-  let durationDays =
-    getSubscriptionDurationDays(
-      user
-    );
-
-  const daysLeft =
-    Math.max(
-      0,
-      Math.ceil(
-        (
-          expireTs -
-          Date.now()
-        ) /
-        86400000
-      )
-    );
-
-  /*
-   * If we know the actual subscription
-   * duration, use it.
-   */
-  if(
-    durationDays &&
-    durationDays > 0
-  ){
+  }else{
 
     const pct =
       Math.max(
         0,
         Math.min(
           100,
-          (
-            daysLeft /
-            durationDays
-          ) *
-          100
+          (used / limit) * 100
         )
+      );
+
+    const color =
+      safetyColor(
+        100 - pct
       );
 
     fg.setAttribute(
       'stroke-dasharray',
-      pct.toFixed(1) +
+      (
+        (pct / 100) *
+        RING_ARC_LEN
+      ).toFixed(2) +
       ',100'
+    );
+
+    fg.style.stroke =
+      color;
+
+    ringLabel.style.color =
+      color;
+
+    if(duDot){
+
+      duDot.style.background =
+        color;
+
+    }
+
+    fg.classList.toggle(
+      'zero',
+      pct <= 0
+    );
+
+    fg.classList.toggle(
+      'danger',
+      pct >= 90
+    );
+
+    if(animate){
+
+      animateNumberText(
+        ringLabel,
+        Math.round(pct) + '%'
+      );
+
+    }else{
+
+      ringLabel.textContent =
+        Math.round(pct) +
+        '%';
+
+    }
+
+    setDataUsedRingDot(
+      pct
+    );
+
+    ofLimitEl.textContent =
+      'of ' +
+      formatBytes(limit);
+
+    if(animate){
+
+      revealField(
+        ofLimitEl
+      );
+
+    }
+
+    if(animate){
+
+      animateNumberText(
+        remainingValueEl,
+        formatBytes(
+          Math.max(
+            0,
+            limit - used
+          )
+        )
+      );
+
+    }else{
+
+      remainingValueEl.textContent =
+        formatBytes(
+          Math.max(
+            0,
+            limit - used
+          )
+        );
+
+    }
+
+  }
+
+  const totalValueEl =
+    document.getElementById(
+      'duTotalValue'
+    );
+
+  if(totalValueEl){
+
+    totalValueEl.textContent =
+      limit
+        ? formatBytes(limit)
+        : 'Unlimited';
+
+    if(animate){
+
+      revealField(
+        totalValueEl
+      );
+
+    }
+
+  }
+
+  const lastConnEl =
+    document.getElementById(
+      'duLastConnection'
+    );
+
+  const statusBadge =
+    document.getElementById(
+      'duStatusBadge'
+    );
+
+  const connHint =
+    document.getElementById(
+      'duConnHint'
+    );
+
+  const onlineTs =
+    timestampMs(
+      user.online_at
+    );
+
+  const prevLastConnText =
+    lastConnEl.textContent;
+
+  lastConnEl.textContent =
+    formatLastConnection(
+      user.online_at
+    );
+
+  if(
+    lastConnEl.textContent !==
+    prevLastConnText
+  ){
+
+    revealField(
+      lastConnEl
+    );
+
+  }
+
+  const isOnline =
+    !!onlineTs &&
+    (
+      Date.now() -
+      onlineTs
+    ) <=
+      DATA_USED_ONLINE_WINDOW_MS;
+
+  if(statusBadge){
+
+    const prevBadgeText =
+      statusBadge.textContent;
+
+    statusBadge.textContent =
+      isOnline
+        ? 'Online'
+        : 'Offline';
+
+    statusBadge.classList.toggle(
+      'disabled',
+      !isOnline
+    );
+
+    if(
+      statusBadge.textContent !==
+      prevBadgeText
+    ){
+
+      revealBadge(
+        statusBadge
+      );
+
+    }
+
+  }
+
+  if(connHint){
+
+    connHint.style.display =
+      isOnline
+        ? ''
+        : 'none';
+
+  }
+
+}
+
+function updateDaysLeftCard(user, animate){
+
+  user = user || {};
+
+  const leftValueEl =
+    document.getElementById(
+      'dlDaysLeftValue'
+    );
+
+  const expireValueEl =
+    document.getElementById(
+      'dlExpireValue'
+    );
+
+  if(
+    !leftValueEl ||
+    !expireValueEl
+  ){
+
+    return;
+
+  }
+
+  const expireTs =
+    timestampMs(
+      user.expire
+    );
+
+  expireValueEl.textContent =
+    formatExpire(
+      user.expire
+    );
+
+  if(animate){
+
+    revealField(
+      expireValueEl
+    );
+
+  }
+
+  if(!expireTs){
+
+    leftValueEl.textContent =
+      'Unlimited';
+
+    leftValueEl.style.color =
+      '';
+
+    leftValueEl.classList.remove(
+      'du-days-hero-value--loading'
+    );
+
+    leftValueEl.classList.add(
+      'du-days-hero-value--text'
+    );
+
+    leftValueEl.classList.remove(
+      'danger'
+    );
+
+    return;
+
+  }
+
+  const msLeft =
+    expireTs -
+    Date.now();
+
+  const daysLeft =
+    Math.max(
+      0,
+      Math.ceil(
+        msLeft /
+        86400000
+      )
+    );
+
+  const createdTs =
+    timestampMs(
+      user.created_at
+    );
+
+  let daysLeftPct =
+    null;
+
+  if(
+    createdTs &&
+    expireTs > createdTs
+  ){
+
+    const totalMs =
+      expireTs -
+      createdTs;
+
+    const remainingMs =
+      Math.max(
+        0,
+        expireTs -
+        Date.now()
+      );
+
+    daysLeftPct =
+      Math.max(
+        0,
+        Math.min(
+          100,
+          (remainingMs / totalMs) * 100
+        )
+      );
+
+  }
+
+  const daysColor =
+    daysLeftPct === null
+      ? ''
+      : safetyColor(
+          daysLeftPct
+        );
+
+  if(daysLeft <= 0){
+
+    leftValueEl.textContent =
+      'Expired';
+
+    leftValueEl.style.color =
+      daysLeftPct === null
+        ? safetyColor(0)
+        : daysColor;
+
+    leftValueEl.classList.remove(
+      'du-days-hero-value--loading'
+    );
+
+    leftValueEl.classList.add(
+      'du-days-hero-value--text'
+    );
+
+    leftValueEl.classList.add(
+      'danger'
     );
 
   }else{
 
-    /*
-     * Fallback:
-     * keep a sensible ring instead of
-     * permanently assuming 30 days.
-     */
-    fg.setAttribute(
-      'stroke-dasharray',
-      daysLeft > 0
-        ? '100,100'
-        : '0,100'
+    leftValueEl.style.color =
+      daysColor;
+
+    if(animate){
+
+      animateNumberText(
+        leftValueEl,
+        String(daysLeft)
+      );
+
+    }else{
+
+      leftValueEl.textContent =
+        String(
+          daysLeft
+        );
+
+    }
+
+    leftValueEl.classList.remove(
+      'du-days-hero-value--text'
+    );
+
+    leftValueEl.classList.remove(
+      'du-days-hero-value--loading'
+    );
+
+    leftValueEl.classList.toggle(
+      'danger',
+      daysLeft <= 3
     );
 
   }
-
-  if(daysLeft <= 3){
-
-    fg.classList.add(
-      'ring-danger'
-    );
-
-  }else if(daysLeft <= 7){
-
-    fg.classList.add(
-      'ring-warn'
-    );
-
-  }
-
-  label.textContent =
-    daysLeft +
-    'd';
 
 }
 
-/* =========================================================
-   USER
-   ========================================================= */
+let duActivePage = 0;
+
+let duPageHeight = 0;
+
+let duDragState = null;
+
+function syncDuPageHeight(){
+
+  const track =
+    document.getElementById(
+      'duPageTrack'
+    );
+
+  if(!track) return;
+
+  track.classList.add(
+    'du-ready'
+  );
+
+  const viewport =
+    track.parentElement;
+
+  const pages =
+    track.querySelectorAll(
+      '.du-page'
+    );
+
+  if(!pages.length) return;
+
+  pages.forEach(
+    p => {
+      p.style.height = '';
+    }
+  );
+
+  let maxH = 0;
+
+  pages.forEach(
+    p => {
+
+      maxH =
+        Math.max(
+          maxH,
+          p.offsetHeight
+        );
+
+    }
+  );
+
+  pages.forEach(
+    p => {
+      p.style.height =
+        maxH + 'px';
+    }
+  );
+
+  if(viewport){
+
+    viewport.style.height =
+      maxH + 'px';
+
+  }
+
+  duPageHeight = maxH;
+
+  const wasTransition =
+    track.style.transition;
+
+  track.style.transition =
+    'none';
+
+  track.style.transform =
+    'translateY(' +
+    (
+      duActivePage *
+      -duPageHeight
+    ) +
+    'px)';
+
+  void track.offsetHeight;
+
+  track.style.transition =
+    wasTransition;
+
+}
+
+let duSwipeHintPlayed = false;
+
+function playDuPageSwipeHint(){
+
+  if(duSwipeHintPlayed) return;
+
+  const track =
+    document.getElementById(
+      'duPageTrack'
+    );
+
+  if(
+    !track ||
+    duPageHeight <= 0 ||
+    duActivePage !== 0
+  ){
+
+    return;
+
+  }
+
+  duSwipeHintPlayed = true;
+
+  const peek =
+    Math.min(
+      16,
+      Math.round(
+        duPageHeight * .12
+      )
+    );
+
+  track.style.setProperty(
+    '--du-swipe-hint-peek',
+    peek + 'px'
+  );
+
+  const onEnd = () => {
+
+    track.classList.remove(
+      'du-swipe-hint-play'
+    );
+
+    track.removeEventListener(
+      'animationend',
+      onEnd
+    );
+
+  };
+
+  track.addEventListener(
+    'animationend',
+    onEnd
+  );
+
+  track.classList.add(
+    'du-swipe-hint-play'
+  );
+
+}
+
+function setDataUsedPage(
+  index,
+  animate
+){
+
+  const track =
+    document.getElementById(
+      'duPageTrack'
+    );
+
+  if(!track) return;
+
+  duActivePage =
+    index;
+
+  track.style.transition =
+    animate
+      ? 'transform .5s cubic-bezier(.34,1.35,.64,1)'
+      : 'none';
+
+  track.style.transform =
+    'translateY(' +
+    (
+      index *
+      -duPageHeight
+    ) +
+    'px)';
+
+  document
+    .querySelectorAll(
+      '#duPageDots .du-page-dot'
+    )
+    .forEach(
+      (dot, i) => {
+
+        dot.classList.toggle(
+          'active',
+          i === index
+        );
+
+      }
+    );
+
+}
+
+function setupDataUsedSwipe(){
+
+  const card =
+    document.getElementById(
+      'dataUsedCard'
+    );
+
+  const track =
+    document.getElementById(
+      'duPageTrack'
+    );
+
+  if(
+    !card ||
+    !track
+  ){
+
+    return;
+
+  }
+
+  const PAGE_COUNT = 2;
+
+  card.addEventListener(
+    'pointerdown',
+    e => {
+
+      duDragState = {
+        startY: e.clientY,
+        startX: e.clientX,
+        dragging: false,
+        pointerId: e.pointerId
+      };
+
+      track.style.transition =
+        'none';
+
+    }
+  );
+
+  card.addEventListener(
+    'pointermove',
+    e => {
+
+      if(
+        !duDragState ||
+        duDragState.pointerId !==
+          e.pointerId
+      ){
+
+        return;
+
+      }
+
+      const dy =
+        e.clientY -
+        duDragState.startY;
+
+      const dx =
+        e.clientX -
+        duDragState.startX;
+
+      if(!duDragState.dragging){
+
+        if(
+          Math.abs(dy) < 4 &&
+          Math.abs(dx) < 4
+        ){
+
+          return;
+
+        }
+
+        if(
+          Math.abs(dy) <=
+          Math.abs(dx)
+        ){
+
+          duDragState = null;
+
+          return;
+
+        }
+
+        duDragState.dragging =
+          true;
+
+        try{
+
+          card.setPointerCapture(
+            e.pointerId
+          );
+
+        }catch(err){}
+
+      }
+
+      let posPx =
+        (
+          duActivePage *
+          -duPageHeight
+        ) +
+        dy;
+
+      const minPx =
+        -duPageHeight *
+        (PAGE_COUNT - 1);
+
+      if(posPx > 0){
+
+        posPx =
+          posPx *
+          0.28;
+
+      }else if(posPx < minPx){
+
+        posPx =
+          minPx +
+          (
+            posPx -
+            minPx
+          ) *
+          0.28;
+
+      }
+
+      track.style.transform =
+        'translateY(' +
+        posPx +
+        'px)';
+
+    }
+  );
+
+  function endDrag(e){
+
+    if(!duDragState) return;
+
+    if(duDragState.dragging){
+
+      const dy =
+        e.clientY -
+        duDragState.startY;
+
+      const threshold =
+        duPageHeight *
+        0.18;
+
+      let nextPage =
+        duActivePage;
+
+      if(
+        dy < -threshold &&
+        duActivePage <
+          PAGE_COUNT - 1
+      ){
+
+        nextPage =
+          duActivePage +
+          1;
+
+      }else if(
+        dy > threshold &&
+        duActivePage > 0
+      ){
+
+        nextPage =
+          duActivePage -
+          1;
+
+      }
+
+      setDataUsedPage(
+        nextPage,
+        true
+      );
+
+    }
+
+    duDragState = null;
+
+  }
+
+  card.addEventListener(
+    'pointerup',
+    endDrag
+  );
+
+  card.addEventListener(
+    'pointercancel',
+    endDrag
+  );
+
+  document
+    .querySelectorAll(
+      '#duPageDots .du-page-dot'
+    )
+    .forEach(
+      (dot, i) => {
+
+        dot.style.cursor =
+          'pointer';
+
+        dot.addEventListener(
+          'click',
+          () =>
+            setDataUsedPage(
+              i,
+              true
+            )
+        );
+
+      }
+    );
+
+  syncDuPageHeight();
+
+  setDataUsedPage(
+    0,
+    false
+  );
+
+  setTimeout(
+    playDuPageSwipeHint,
+    900
+  );
+
+}
+
+let refreshToastTimer = null;
+
+let refreshToastContentTimer = null;
+
+const TOAST_ICONS = {
+  success:
+    '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+  error:
+    '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9a15.9 15.9 0 0 1 22 0"/><path d="M5 12.5a10.6 10.6 0 0 1 14 0"/><path d="M8.5 16a5.3 5.3 0 0 1 7 0"/><path d="M12 20.01v-.01"/><path d="M2 2l20 20"/></svg>'
+};
+
+function showRefreshToast(type, title, message, duration){
+
+  const toast =
+    document.getElementById(
+      'refreshToast'
+    );
+
+  const iconEl =
+    document.getElementById(
+      'refreshToastIcon'
+    );
+
+  const titleEl =
+    document.getElementById(
+      'refreshToastTitle'
+    );
+
+  const textEl =
+    document.getElementById(
+      'refreshToastText'
+    );
+
+  if(
+    !toast ||
+    !iconEl ||
+    !titleEl ||
+    !textEl
+  ){
+
+    return;
+
+  }
+
+  const isSuccess =
+    type === 'success';
+
+  function applyContent(){
+
+    titleEl.textContent =
+      title;
+
+    textEl.textContent =
+      message;
+
+    iconEl.innerHTML =
+      isSuccess
+        ? TOAST_ICONS.success
+        : TOAST_ICONS.error;
+
+    toast.classList.toggle(
+      'success',
+      isSuccess
+    );
+
+    toast.classList.toggle(
+      'error',
+      !isSuccess
+    );
+
+  }
+
+  if(refreshToastContentTimer){
+
+    clearTimeout(
+      refreshToastContentTimer
+    );
+
+    refreshToastContentTimer =
+      null;
+
+  }
+
+  const alreadyShown =
+    toast.classList.contains(
+      'show'
+    );
+
+  if(alreadyShown){
+
+    titleEl.style.opacity =
+      '0';
+
+    textEl.style.opacity =
+      '0';
+
+    iconEl.style.opacity =
+      '0';
+
+    refreshToastContentTimer =
+      setTimeout(
+        () => {
+
+          refreshToastContentTimer =
+            null;
+
+          applyContent();
+
+          titleEl.style.opacity =
+            '';
+
+          textEl.style.opacity =
+            '';
+
+          iconEl.style.opacity =
+            '';
+
+        },
+        140
+      );
+
+  }else{
+
+    applyContent();
+
+  }
+
+  toast.classList.remove(
+    'dragging'
+  );
+
+  toast.style.transform =
+    '';
+
+  if(refreshToastTimer){
+
+    clearTimeout(
+      refreshToastTimer
+    );
+
+    refreshToastTimer =
+      null;
+
+  }
+
+  toast.classList.add(
+    'show'
+  );
+
+  refreshToastTimer =
+    setTimeout(
+      hideRefreshToast,
+      duration || 5000
+    );
+
+}
+
+function hideRefreshToast(){
+
+  const toast =
+    document.getElementById(
+      'refreshToast'
+    );
+
+  if(toast){
+
+    toast.classList.remove(
+      'show'
+    );
+
+    toast.classList.remove(
+      'dragging'
+    );
+
+    toast.style.transform =
+      '';
+
+  }
+
+  const titleEl =
+    document.getElementById(
+      'refreshToastTitle'
+    );
+
+  const textEl =
+    document.getElementById(
+      'refreshToastText'
+    );
+
+  const iconEl =
+    document.getElementById(
+      'refreshToastIcon'
+    );
+
+  if(titleEl) titleEl.style.opacity = '';
+
+  if(textEl) textEl.style.opacity = '';
+
+  if(iconEl) iconEl.style.opacity = '';
+
+  if(refreshToastContentTimer){
+
+    clearTimeout(
+      refreshToastContentTimer
+    );
+
+    refreshToastContentTimer =
+      null;
+
+  }
+
+  if(refreshToastTimer){
+
+    clearTimeout(
+      refreshToastTimer
+    );
+
+    refreshToastTimer =
+      null;
+
+  }
+
+}
+
+(function setupRefreshToastSwipe(){
+
+  const toast =
+    document.getElementById(
+      'refreshToast'
+    );
+
+  if(!toast) return;
+
+  let dragState = null;
+
+  toast.addEventListener(
+    'pointerdown',
+    e => {
+
+      dragState = {
+        pointerId: e.pointerId,
+        startY: e.clientY,
+        dy: 0
+      };
+
+      toast.classList.add(
+        'dragging'
+      );
+
+      try{
+
+        toast.setPointerCapture(
+          e.pointerId
+        );
+
+      }catch(err){}
+
+    }
+  );
+
+  toast.addEventListener(
+    'pointermove',
+    e => {
+
+      if(
+        !dragState ||
+        dragState.pointerId !==
+          e.pointerId
+      ){
+
+        return;
+
+      }
+
+      const dy =
+        Math.min(
+          0,
+          e.clientY -
+          dragState.startY
+        );
+
+      dragState.dy = dy;
+
+      toast.style.transform =
+        'translate(-50%, ' +
+        dy +
+        'px)';
+
+    }
+  );
+
+  function endDrag(e){
+
+    if(
+      !dragState ||
+      dragState.pointerId !==
+        e.pointerId
+    ){
+
+      return;
+
+    }
+
+    toast.classList.remove(
+      'dragging'
+    );
+
+    const dy =
+      dragState.dy;
+
+    dragState = null;
+
+    toast.style.transform =
+      '';
+
+    if(dy < -24){
+
+      hideRefreshToast();
+
+    }
+
+  }
+
+  toast.addEventListener(
+    'pointerup',
+    endDrag
+  );
+
+  toast.addEventListener(
+    'pointercancel',
+    endDrag
+  );
+
+})();
+
+async function refreshDataUsedCard(
+  notifyOnSuccess
+){
+
+  try{
+
+    const res =
+      await fetch(
+        subUrl() +
+        '/info',
+        {
+          headers:{
+            Accept:
+              'application/json'
+          }
+        }
+      );
+
+    if(!res.ok){
+
+      throw new Error(
+        'HTTP ' +
+        res.status
+      );
+
+    }
+
+    const user =
+      await res.json();
+
+    window.__pgUser =
+      user;
+
+    updateDataUsedCard(
+      user
+    );
+
+    updateDaysLeftCard(
+      user
+    );
+
+    syncDuPageHeight();
+
+    /* The 45s background poll refreshes silently — a toast
+       every 45 seconds forever is just noise. Only confirm
+       success when the refresh was triggered by something
+       the user will actually notice, like coming back online. */
+    if(notifyOnSuccess){
+
+      showRefreshToast(
+        'success',
+        'Synced',
+        'Data updated just now',
+        3000
+      );
+
+    }
+
+  }catch(e){
+
+    /* Avoid stacking a "Sync Issue" toast every 45s on top of
+       the dedicated "No Connection" toast the offline listener
+       already shows — only surface this for failures that
+       happen while the browser still thinks it's online. */
+    if(navigator.onLine){
+
+      showRefreshToast(
+        'error',
+        'Sync Issue',
+        "Couldn't refresh data — showing last known values",
+        6000
+      );
+
+    }
+
+  }
+
+}
+
+const LOADING_PLACEHOLDER_IDS = [
+  'unameOut',
+  'createdAtOut',
+  'hwidOut',
+  'duStatusBadge',
+  'duLastConnection',
+  'duUsedValue',
+  'duOfLimit',
+  'duRemainingValue',
+  'duTotalValue',
+  'dlExpireValue',
+  'dlDaysLeftValue',
+  'usageTotalValue'
+];
+
+function clearLoadingPlaceholders(){
+
+  LOADING_PLACEHOLDER_IDS.forEach(
+    id => {
+
+      const el =
+        document.getElementById(
+          id
+        );
+
+      if(el){
+
+        el.classList.remove(
+          'ph-loading'
+        );
+
+      }
+
+    }
+  );
+
+}
+
+function restoreLoadingPlaceholders(){
+
+  LOADING_PLACEHOLDER_IDS.forEach(
+    id => {
+
+      const el =
+        document.getElementById(
+          id
+        );
+
+      if(el){
+
+        el.classList.add(
+          'ph-loading'
+        );
+
+        el.textContent =
+          'Loading';
+
+      }
+
+    }
+  );
+
+}
+
+/* Shared scroll-lock counter: the info modal and the load-error
+   overlay each lock body scroll independently. Without a shared
+   count, closing one while the other is still open would wrongly
+   re-enable page scroll behind the one still showing. */
+let bodyScrollLockCount = 0;
+
+function lockBodyScroll(){
+
+  bodyScrollLockCount++;
+
+  document.body.style.overflow =
+    'hidden';
+
+}
+
+function unlockBodyScroll(){
+
+  bodyScrollLockCount =
+    Math.max(
+      0,
+      bodyScrollLockCount - 1
+    );
+
+  if(bodyScrollLockCount === 0){
+
+    document.body.style.overflow =
+      '';
+
+  }
+
+}
+
+function showLoadError(){
+
+  const overlay =
+    document.getElementById(
+      'loadErrorOverlay'
+    );
+
+  if(!overlay){
+
+    return;
+
+  }
+
+  if(
+    overlay.classList.contains(
+      'open'
+    )
+  ){
+
+    return;
+
+  }
+
+  overlay.classList.add(
+    'open'
+  );
+
+  lockBodyScroll();
+
+}
+
+function hideLoadError(){
+
+  const overlay =
+    document.getElementById(
+      'loadErrorOverlay'
+    );
+
+  if(!overlay){
+
+    return;
+
+  }
+
+  if(
+    !overlay.classList.contains(
+      'open'
+    )
+  ){
+
+    return;
+
+  }
+
+  overlay.classList.remove(
+    'open'
+  );
+
+  unlockBodyScroll();
+
+}
+
+(function setupLoadErrorRetry(){
+
+  const retryBtn =
+    document.getElementById(
+      'loadErrorRetryBtn'
+    );
+
+  if(!retryBtn) return;
+
+  retryBtn.addEventListener(
+    'click',
+    () => {
+
+      hideLoadError();
+
+      restoreLoadingPlaceholders();
+
+      init();
+
+    }
+  );
+
+})();
 
 function renderUser(user){
 
-  document.getElementById(
-    'unameOut'
-  ).textContent =
+  clearLoadingPlaceholders();
+
+  const unameEl =
+    document.getElementById(
+      'unameOut'
+    );
+
+  unameEl.textContent =
     user.username ||
     '—';
 
+  revealField(
+    unameEl
+  );
+
+  const createdTs =
+    timestampMs(
+      user.created_at
+    );
+
+  const createdEl =
+    document.getElementById(
+      'createdAtOut'
+    );
+
+  createdEl.textContent =
+    createdTs
+      ? formatCreatedAt(createdTs)
+      : '—';
+
+  revealField(
+    createdEl
+  );
+
   const status =
-    (
+    String(
       user.status ||
       'active'
     ).toLowerCase();
@@ -1941,8 +6192,14 @@ function renderUser(user){
         ? ' expired'
         : status === 'disabled'
           ? ' disabled'
-          : ''
+          : status === 'on_hold'
+            ? ' on-hold'
+            : ''
     );
+
+  revealBadge(
+    badge
+  );
 
   const used =
     Number(
@@ -1954,37 +6211,41 @@ function renderUser(user){
       user.data_limit
     ) || 0;
 
-  document.getElementById(
-    'usedOut'
-  ).textContent =
-    formatBytes(
-      used
+  const hwidLimit =
+    Number(
+      user.hwid_limit
+    ) || 0;
+
+  const hwidEl =
+    document.getElementById(
+      'hwidOut'
     );
 
-  document.getElementById(
-    'limitOut'
-  ).textContent =
-    !limit
-      ? '∞'
-      : formatBytes(
-          limit
+  hwidEl.textContent =
+    !hwidLimit
+      ? 'Unlimited'
+      : hwidLimit +
+        (
+          hwidLimit === 1
+            ? ' device'
+            : ' devices'
         );
 
-  document.getElementById(
-    'expireOut'
-  ).textContent =
-    formatExpire(
-      user.expire
-    );
-
-  updateUsageRing(
-    used,
-    limit
+  revealField(
+    hwidEl
   );
 
-  updateDaysRing(
-    user.expire
+  updateDataUsedCard(
+    user,
+    true
   );
+
+  updateDaysLeftCard(
+    user,
+    true
+  );
+
+  syncDuPageHeight();
 
   setUsageTotalsFromUser(
     user
@@ -1992,9 +6253,359 @@ function renderUser(user){
 
 }
 
-/* =========================================================
-   NOTICE / ANNOUNCEMENT
-   ========================================================= */
+const RESET_STRATEGY_LABELS = {
+  no_reset: 'No periodic reset',
+  day: 'Resets daily',
+  week: 'Resets weekly',
+  month: 'Resets monthly',
+  year: 'Resets yearly'
+};
+
+function resetStrategyLabel(strategy){
+
+  if(
+    !strategy ||
+    typeof strategy !== 'string'
+  ){
+
+    return '';
+
+  }
+
+  const key =
+    strategy.trim().toLowerCase();
+
+  return (
+    RESET_STRATEGY_LABELS[key] ||
+    (
+      key.charAt(0).toUpperCase() +
+      key.slice(1)
+    )
+  );
+
+}
+
+function fillModalValue(
+  el,
+  text
+){
+
+  if(text){
+
+    el.textContent = text;
+
+    el.classList.remove('empty');
+
+  }else{
+
+    el.textContent = 'Not set';
+
+    el.classList.add('empty');
+
+  }
+
+}
+
+function populateUserInfoModal(){
+
+  const user =
+    window.__pgUser ||
+    {};
+
+  fillModalValue(
+    document.getElementById(
+      'userInfoModalReset'
+    ),
+    resetStrategyLabel(
+      user.data_limit_reset_strategy
+    )
+  );
+
+  fillModalValue(
+    document.getElementById(
+      'userInfoModalIp'
+    ),
+    typeof user.ip === 'string'
+      ? user.ip.trim()
+      : ''
+  );
+
+  fillModalValue(
+    document.getElementById(
+      'userInfoModalNextPlan'
+    ),
+    formatNextPlan(
+      user.next_plan
+    )
+  );
+
+}
+
+function openUserInfoModal(){
+
+  const overlay =
+    document.getElementById(
+      'userInfoModalOverlay'
+    );
+
+  if(
+    overlay &&
+    overlay.classList.contains(
+      'open'
+    )
+  ){
+
+    return;
+
+  }
+
+  populateUserInfoModal();
+
+  if(overlay){
+
+    overlay.classList.add(
+      'open'
+    );
+
+  }
+
+  lockBodyScroll();
+
+  staggerReveal(
+    document.querySelectorAll(
+      '#userInfoModalOverlay .info-modal-section'
+    ),
+    40
+  );
+
+}
+
+function closeUserInfoModal(){
+
+  const overlay =
+    document.getElementById(
+      'userInfoModalOverlay'
+    );
+
+  if(
+    !overlay ||
+    !overlay.classList.contains(
+      'open'
+    )
+  ){
+
+    return;
+
+  }
+
+  overlay.classList.remove(
+    'open'
+  );
+
+  unlockBodyScroll();
+
+}
+
+(function initUserInfoModal(){
+
+  const trigger =
+    document.getElementById(
+      'userInfoAlert'
+    );
+
+  const tip =
+    document.getElementById(
+      'userInfoAlertTip'
+    );
+
+  const overlay =
+    document.getElementById(
+      'userInfoModalOverlay'
+    );
+
+  const closeBtn =
+    document.getElementById(
+      'userInfoModalCloseBtn'
+    );
+
+  const HINT_KEY =
+    'pgUserInfoHintSeen';
+
+  let hintTimer =
+    null;
+
+  function hintSeen(){
+
+    try{
+
+      return !!localStorage.getItem(
+        HINT_KEY
+      );
+
+    }catch(e){
+
+      return false;
+
+    }
+
+  }
+
+  function markHintSeen(){
+
+    try{
+
+      localStorage.setItem(
+        HINT_KEY,
+        '1'
+      );
+
+    }catch(e){}
+
+  }
+
+  function dismissHint(){
+
+    if(hintTimer){
+
+      clearTimeout(
+        hintTimer
+      );
+
+      hintTimer =
+        null;
+
+    }
+
+    if(tip){
+
+      tip.classList.remove(
+        'show'
+      );
+
+    }
+
+    if(trigger){
+
+      trigger.classList.add(
+        'hint-dismissed'
+      );
+
+    }
+
+    markHintSeen();
+
+  }
+
+  if(
+    trigger &&
+    tip &&
+    !hintSeen()
+  ){
+
+    setTimeout(
+      () => {
+
+        tip.classList.add(
+          'show'
+        );
+
+        hintTimer =
+          setTimeout(
+            dismissHint,
+            4500
+          );
+
+      },
+      900
+    );
+
+  }else if(trigger){
+
+    trigger.classList.add(
+      'hint-dismissed'
+    );
+
+  }
+
+  if(trigger){
+
+    trigger.addEventListener(
+      'click',
+      () => {
+
+        dismissHint();
+
+        openUserInfoModal();
+
+      }
+    );
+
+    trigger.addEventListener(
+      'keydown',
+      e => {
+
+        if(
+          e.key === 'Enter' ||
+          e.key === ' '
+        ){
+
+          e.preventDefault();
+
+          dismissHint();
+
+          openUserInfoModal();
+
+        }
+
+      }
+    );
+
+  }
+
+  if(closeBtn){
+
+    closeBtn.addEventListener(
+      'click',
+      closeUserInfoModal
+    );
+
+  }
+
+  if(overlay){
+
+    overlay.addEventListener(
+      'click',
+      e => {
+
+        if(e.target === overlay){
+
+          closeUserInfoModal();
+
+        }
+
+      }
+    );
+
+  }
+
+  document.addEventListener(
+    'keydown',
+    e => {
+
+      if(
+        e.key === 'Escape' &&
+        overlay &&
+        overlay.classList.contains('open')
+      ){
+
+        closeUserInfoModal();
+
+      }
+
+    }
+  );
+
+})();
 
 const NOTICE_KEYS = [
 
@@ -2021,6 +6632,82 @@ function escapeAttr(s){
   return escapeHtml(s)
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+
+}
+
+/* Defense-in-depth: only ever render http(s) URLs as href/src.
+   Rejects javascript:, data:text/html, vbscript:, and similar
+   schemes that could execute if a backend field is tampered
+   with (compromised admin panel, MITM without HTTPS, etc).
+   Pass {denyOnly:true} for fields that legitimately use custom
+   app URI schemes (e.g. VPN client deep links) — that mode only
+   blocks the known-dangerous schemes instead of allowlisting. */
+function sanitizeUrl(
+  url,
+  opts
+){
+
+  const value =
+    String(
+      url ||
+      ''
+    ).trim();
+
+  if(!value){
+
+    return '';
+
+  }
+
+  let parsed;
+
+  try{
+
+    parsed =
+      new URL(
+        value,
+        window.location.origin
+      );
+
+  }catch(e){
+
+    return '';
+
+  }
+
+  opts =
+    opts ||
+    {};
+
+  if(opts.denyOnly){
+
+    const DANGEROUS_SCHEMES = [
+      'javascript:',
+      'vbscript:',
+      'data:',
+      'file:'
+    ];
+
+    return DANGEROUS_SCHEMES.indexOf(
+      parsed.protocol
+    ) === -1
+      ? value
+      : '';
+
+  }
+
+  const allowedSchemes =
+    opts.allowedSchemes ||
+    [
+      'http:',
+      'https:'
+    ];
+
+  return allowedSchemes.indexOf(
+    parsed.protocol
+  ) !== -1
+    ? value
+    : '';
 
 }
 
@@ -2125,7 +6812,9 @@ function renderNotice(
   ){
 
     url =
-      headers['announce-url'];
+      sanitizeUrl(
+        headers['announce-url']
+      );
 
   }
 
@@ -2199,9 +6888,1019 @@ function renderNotice(
 
 }
 
-/* =========================================================
-   LINK TYPE
-   ========================================================= */
+const SUPPORT_KEYS = [
+
+  'support_url',
+  'support_link',
+  'support',
+  'support_href',
+  'telegram_url',
+  'telegram_link',
+  'telegram',
+  'telegram_id',
+  'contact_url',
+  'contact_link',
+  'contact',
+  'help_url'
+
+];
+
+function normalizeContactUrl(value){
+
+  value =
+    String(value || '').trim();
+
+  if(!value){
+
+    return '';
+
+  }
+
+  const INVALID_PLACEHOLDERS = [
+    '0',
+    'null',
+    'undefined',
+    'none',
+    'false',
+    'n/a',
+    'na',
+    '-',
+    '--',
+    'test',
+    'unknown'
+  ];
+
+  if(
+    INVALID_PLACEHOLDERS.indexOf(
+      value.toLowerCase()
+    ) !== -1
+  ){
+
+    return '';
+
+  }
+
+  if(value.charAt(0) === '@'){
+
+    const uname =
+      value.slice(1);
+
+    if(
+      !/^[A-Za-z][\w]{4,}$/.test(uname)
+    ){
+
+      return '';
+
+    }
+
+    return 'https://t.me/' +
+      encodeURIComponent(
+        uname
+      );
+
+  }
+
+  if(
+    /^[\w.]{3,}$/.test(value) &&
+    value.indexOf('@') < 0 &&
+    value.indexOf('.') < 0
+  ){
+
+    if(
+      !/^[A-Za-z][\w]{4,}$/.test(value)
+    ){
+
+      return '';
+
+    }
+
+    return 'https://t.me/' +
+      encodeURIComponent(value);
+
+  }
+
+  if(
+    /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value)
+  ){
+
+    return 'mailto:' + value;
+
+  }
+
+  if(
+    /^https?:\/\//i.test(value) ||
+    /^mailto:|^tel:/i.test(value)
+  ){
+
+    return value;
+
+  }
+
+  if(
+    /^(t\.me|telegram\.me|wa\.me)\//i.test(value)
+  ){
+
+    return 'https://' + value;
+
+  }
+
+  if(
+    /^[\w.-]+\.[a-z]{2,}(?:\/.*)?$/i.test(value)
+  ){
+
+    return 'https://' + value;
+
+  }
+
+  return '';
+
+}
+
+function getSupportUrl(
+  user,
+  headers
+){
+
+  headers =
+    headers ||
+    {};
+
+  for(
+    const k of SUPPORT_KEYS
+  ){
+
+    if(
+      user &&
+      typeof user[k] === 'string' &&
+      user[k].trim()
+    ){
+
+      const url =
+        normalizeContactUrl(
+          user[k].trim()
+        );
+
+      if(url){
+
+        return url;
+
+      }
+
+    }
+
+  }
+
+  const headerRaw =
+    headers['support-url'] ||
+    headers['support'] ||
+    headers['telegram'] ||
+    '';
+
+  if(headerRaw){
+
+    const url =
+      normalizeContactUrl(
+        headerRaw
+      );
+
+    if(url){
+
+      return url;
+
+    }
+
+  }
+
+  return '';
+
+}
+
+function renderSupportFab(url){
+
+  const wrap =
+    document.getElementById(
+      'supportFabWrap'
+    );
+
+  if(!wrap){
+
+    return;
+
+  }
+
+  if(!url){
+
+    wrap.classList.remove(
+      'ready',
+      'open'
+    );
+
+    return;
+
+  }
+
+  const link =
+    document.getElementById(
+      'supportFabLink'
+    );
+
+  const sub =
+    document.getElementById(
+      'supportFabSub'
+    );
+
+  if(link){
+
+    link.href = url;
+
+  }
+
+  if(sub){
+
+    let label =
+      'Contact support';
+
+    if(
+      /^https?:\/\/(www\.)?(t\.me|telegram\.me)\//i.test(url)
+    ){
+
+      label =
+        'Contact support on Telegram';
+
+    }else if(
+      /^https?:\/\/(www\.)?wa\.me\//i.test(url)
+    ){
+
+      label =
+        'Contact support on WhatsApp';
+
+    }else if(
+      /^mailto:/i.test(url)
+    ){
+
+      label =
+        'Contact support via email';
+
+    }else if(
+      /^tel:/i.test(url)
+    ){
+
+      label =
+        'Call support';
+
+    }
+
+    sub.textContent =
+      label;
+
+  }
+
+  wrap.classList.add(
+    'ready'
+  );
+
+}
+
+function initSupportFab(){
+
+  const wrap =
+    document.getElementById(
+      'supportFabWrap'
+    );
+
+  const btn =
+    document.getElementById(
+      'supportFabBtn'
+    );
+
+  if(
+    !wrap ||
+    !btn
+  ){
+
+    return;
+
+  }
+
+  btn.addEventListener(
+    'click',
+    () => {
+
+      const isOpen =
+        wrap.classList.toggle(
+          'open'
+        );
+
+      btn.setAttribute(
+        'aria-expanded',
+        isOpen ?
+          'true' :
+          'false'
+      );
+
+    }
+  );
+
+  document.addEventListener(
+    'click',
+    (e) => {
+
+      if(
+        wrap.classList.contains('open') &&
+        !wrap.contains(e.target)
+      ){
+
+        wrap.classList.remove(
+          'open'
+        );
+
+        btn.setAttribute(
+          'aria-expanded',
+          'false'
+        );
+
+      }
+
+    }
+  );
+
+}
+
+/* Human-readable names for the copy feedback (aria-label /
+   temporary button text), keyed by the same ConfigFormat
+   values the API expects as the {client_type} path segment. */
+
+const COPY_AS_FORMAT_LABELS = {
+
+  links:'Links copied',
+  links_base64:'Base64 links copied',
+  xray:'Xray config copied',
+  sing_box:'Sing-box config copied',
+  clash:'Clash config copied',
+  clash_meta:'Clash Meta config copied',
+  wireguard:'WireGuard config copied',
+  outline:'Outline config copied'
+
+};
+
+function initCopyAsMenu(){
+
+  const wrap =
+    document.getElementById(
+      'copyAsWrap'
+    );
+
+  const btn =
+    document.getElementById(
+      'copyAsBtn'
+    );
+
+  const menu =
+    document.getElementById(
+      'copyAsMenu'
+    );
+
+  if(
+    !wrap ||
+    !btn ||
+    !menu
+  ){
+
+    return;
+
+  }
+
+  /* Matches .copy-as-menu's opacity/transform transition
+     duration — the popup isn't actually gone from view until
+     this finishes, so the format items' copied/failed labels
+     must stay untouched until then. */
+  const MENU_CLOSE_ANIM_MS = 160;
+
+  function cancelPendingFeedbackReset(){
+
+    if(menu._resetTimer){
+
+      clearTimeout(
+        menu._resetTimer
+      );
+
+      menu._resetTimer =
+        null;
+
+    }
+
+  }
+
+  function closeMenu(){
+
+    menu.classList.remove(
+      'open'
+    );
+
+    btn.setAttribute(
+      'aria-expanded',
+      'false'
+    );
+
+    /* The popup itself is what should end the copied/failed
+       feedback on a format item — not an independent timer —
+       so reset any lingering state, but only once the popup
+       has actually finished fading out of view. */
+
+    cancelPendingFeedbackReset();
+
+    menu._resetTimer =
+      setTimeout(
+        () => {
+
+          menu._resetTimer =
+            null;
+
+          getMenuItems().forEach(
+            resetCopyFeedbackButton
+          );
+
+          setCopyAsMenuBusy(
+            false
+          );
+
+        },
+        MENU_CLOSE_ANIM_MS
+      );
+
+  }
+
+  function scheduleCloseMenu(delay){
+
+    if(menu._closeTimer){
+
+      clearTimeout(
+        menu._closeTimer
+      );
+
+      menu._closeTimer =
+        null;
+
+    }
+
+    menu._closeTimer =
+      setTimeout(
+        () => {
+
+          menu._closeTimer =
+            null;
+
+          closeMenu();
+
+        },
+        delay
+      );
+
+  }
+
+  function getMenuItems(){
+
+    return Array.from(
+      menu.querySelectorAll(
+        '.copy-as-item'
+      )
+    );
+
+  }
+
+  function focusCopyAsItem(index){
+
+    const items =
+      getMenuItems();
+
+    if(!items.length) return;
+
+    const clamped =
+      (
+        (index % items.length) +
+        items.length
+      ) %
+      items.length;
+
+    items[clamped].focus();
+
+  }
+
+  btn.addEventListener(
+    'click',
+    () => {
+
+      if(menu._closeTimer){
+
+        clearTimeout(
+          menu._closeTimer
+        );
+
+        menu._closeTimer =
+          null;
+
+      }
+
+      if(
+        menu.classList.contains(
+          'open'
+        )
+      ){
+
+        closeMenu();
+
+        return;
+
+      }
+
+      cancelPendingFeedbackReset();
+
+      menu.classList.add(
+        'open'
+      );
+
+      btn.setAttribute(
+        'aria-expanded',
+        'true'
+      );
+
+      focusCopyAsItem(0);
+
+    }
+  );
+
+  menu.addEventListener(
+    'keydown',
+    e => {
+
+      const items =
+        getMenuItems();
+
+      const currentIndex =
+        items.indexOf(
+          document.activeElement
+        );
+
+      if(e.key === 'Escape'){
+
+        e.preventDefault();
+
+        if(menu._closeTimer){
+
+          clearTimeout(
+            menu._closeTimer
+          );
+
+          menu._closeTimer =
+            null;
+
+        }
+
+        closeMenu();
+
+        btn.focus();
+
+      }else if(e.key === 'ArrowDown'){
+
+        e.preventDefault();
+
+        focusCopyAsItem(
+          currentIndex + 1
+        );
+
+      }else if(e.key === 'ArrowUp'){
+
+        e.preventDefault();
+
+        focusCopyAsItem(
+          currentIndex - 1
+        );
+
+      }else if(e.key === 'Home'){
+
+        e.preventDefault();
+
+        focusCopyAsItem(0);
+
+      }else if(e.key === 'End'){
+
+        e.preventDefault();
+
+        focusCopyAsItem(
+          items.length - 1
+        );
+
+      }
+
+    }
+  );
+
+  document.addEventListener(
+    'click',
+    e => {
+
+      if(
+        menu.classList.contains('open') &&
+        !wrap.contains(e.target)
+      ){
+
+        if(menu._closeTimer){
+
+          clearTimeout(
+            menu._closeTimer
+          );
+
+          menu._closeTimer =
+            null;
+
+        }
+
+        closeMenu();
+
+      }
+
+    }
+  );
+
+  /* While one format's copied/failed indicator is showing,
+     block every other item (and the main toggle) from being
+     clicked, so the user can't fire a second copy before the
+     first one's feedback has finished. */
+
+  function setCopyAsMenuBusy(busy){
+
+    btn.disabled =
+      busy;
+
+    getMenuItems().forEach(
+      el => {
+
+        el.disabled =
+          busy;
+
+      }
+    );
+
+  }
+
+  menu
+    .querySelectorAll(
+      '.copy-as-item'
+    )
+    .forEach(
+      item => {
+
+        item.addEventListener(
+          'click',
+          async () => {
+
+            setCopyAsMenuBusy(
+              true
+            );
+
+            const format =
+              item.dataset.format;
+
+            const labels =
+              {
+                copied:
+                  COPY_AS_FORMAT_LABELS[
+                    format
+                  ] ||
+                  'Copied',
+                failed:
+                  'Copy failed, please try again'
+              };
+
+            try{
+
+              const res =
+                await fetch(
+                  subUrl() +
+                  '/' +
+                  format
+                );
+
+              if(!res.ok){
+
+                throw new Error(
+                  'HTTP ' +
+                  res.status
+                );
+
+              }
+
+              const text =
+                await res.text();
+
+              await handleCopy(
+                text,
+                item,
+                labels,
+                true
+              );
+
+            }catch(e){
+
+              showCopyFeedback(
+                item,
+                false,
+                labels,
+                true
+              );
+
+            }
+
+            /* The copied/failed indicator on this item now has
+               no timer of its own — it stays until the popup
+               closes, which closeMenu() also uses as the cue
+               to reset it and un-busy the rest of the menu. */
+
+            scheduleCloseMenu(
+              1300
+            );
+
+          }
+        );
+
+      }
+    );
+
+}
+
+
+
+function looksLikeConfigLink(line){
+
+  return /^(vless|vmess|trojan|ss|shadowsocks|hysteria2?|hy2|wireguard):\/\//i.test(
+    String(
+      line ||
+      ''
+    ).trim()
+  );
+
+}
+
+/* /sub/{token}/raw is declared in the API as returning
+   application/json with no fixed schema. In practice this
+   panel wraps the actual config links somewhere inside an
+   arbitrary JSON envelope (e.g. {"body":{"user":{...}}}),
+   rather than a flat newline/base64 blob. Recursively walk
+   every string value in the parsed JSON and pull out anything
+   that is — or, once split/decoded, contains — a real
+   vless://, vmess://, trojan://, etc. link. This works no
+   matter how deeply nested or how the envelope is shaped. */
+
+function extractConfigLinksFromJson(data){
+
+  const found = [];
+
+  function collectFromString(str){
+
+    const trimmed =
+      String(
+        str ||
+        ''
+      ).trim();
+
+    if(!trimmed){
+
+      return;
+
+    }
+
+    const lines =
+      trimmed
+        .split(
+          /\r?\n/
+        )
+        .map(
+          l =>
+            l.trim()
+        )
+        .filter(
+          Boolean
+        );
+
+    lines.forEach(
+      line => {
+
+        if(
+          looksLikeConfigLink(
+            line
+          )
+        ){
+
+          found.push(
+            line
+          );
+
+          return;
+
+        }
+
+        /* A single value might itself be a base64-encoded
+           blob of one or more links (common subscription
+           format), so try decoding before giving up on it. */
+
+        const decoded =
+          decodeBase64Utf8(
+            line
+          );
+
+        if(decoded){
+
+          decoded
+            .split(
+              /\r?\n/
+            )
+            .map(
+              l =>
+                l.trim()
+            )
+            .filter(
+              Boolean
+            )
+            .forEach(
+              dLine => {
+
+                if(
+                  looksLikeConfigLink(
+                    dLine
+                  )
+                ){
+
+                  found.push(
+                    dLine
+                  );
+
+                }
+
+              }
+            );
+
+        }
+
+      }
+    );
+
+  }
+
+  function walk(node){
+
+    if(
+      typeof node ===
+      'string'
+    ){
+
+      collectFromString(
+        node
+      );
+
+      return;
+
+    }
+
+    if(
+      Array.isArray(node)
+    ){
+
+      node.forEach(
+        walk
+      );
+
+      return;
+
+    }
+
+    if(
+      node &&
+      typeof node ===
+        'object'
+    ){
+
+      Object.values(
+        node
+      ).forEach(
+        walk
+      );
+
+    }
+
+  }
+
+  walk(
+    data
+  );
+
+  return Array.from(
+    new Set(
+      found
+    )
+  );
+
+}
+
+/* /sub/{token}/raw is expected to return the user's proxy
+   links as plain text, one per line. Some panel configurations
+   instead fall back to the standard base64-encoded subscription
+   blob (the same format v2rayN/v2rayNG expect) when no
+   client-specific format was negotiated. Detect that case and
+   decode it, so the Links list always ends up with real
+   vless://, vmess://, trojan://, etc. entries instead of a
+   single unreadable base64 line. */
+
+function parseRawSubscriptionLinks(text){
+
+  const trimmed =
+    String(
+      text ||
+      ''
+    ).trim();
+
+  /* Try JSON first — this is what the API spec actually
+     declares (application/json), and what this panel's real
+     response looks like in practice. */
+
+  try{
+
+    const data =
+      JSON.parse(
+        trimmed
+      );
+
+    const jsonLinks =
+      extractConfigLinksFromJson(
+        data
+      );
+
+    if(jsonLinks.length){
+
+      return jsonLinks;
+
+    }
+
+  }catch(e){
+
+    /* Not JSON — fall through to the plain-text/base64
+       handling below. */
+
+  }
+
+  const rawLines =
+    trimmed
+      .split(
+        /\r?\n/
+      )
+      .map(
+        l =>
+          l.trim()
+      )
+      .filter(
+        Boolean
+      );
+
+  if(
+    rawLines.some(
+      looksLikeConfigLink
+    )
+  ){
+
+    return rawLines;
+
+  }
+
+  const decoded =
+    decodeBase64Utf8(
+      trimmed
+    );
+
+  if(decoded){
+
+    const decodedLines =
+      decoded
+        .split(
+          /\r?\n/
+        )
+        .map(
+          l =>
+            l.trim()
+        )
+        .filter(
+          Boolean
+        );
+
+    if(decodedLines.length){
+
+      return decodedLines;
+
+    }
+
+  }
+
+  return rawLines;
+
+}
 
 function linkType(raw){
 
@@ -2282,10 +7981,6 @@ function safeDecode(value){
   }
 
 }
-
-/* =========================================================
-   WIREGUARD CONFIG DOWNLOAD
-   ========================================================= */
 
 function decodeUrlValue(value){
 
@@ -2616,10 +8311,6 @@ function linkFileTitle(
 
 }
 
-/* =========================================================
-   RENDER LINKS
-   ========================================================= */
-
 let allLinks = [];
 
 function renderLinks(
@@ -2634,9 +8325,55 @@ function renderLinks(
       'linkList'
     );
 
-  closeAnyQR();
+  closeAnyQR(
+    true
+  );
+
+  const subLink =
+    subUrl();
+
+  const subRowHtml =
+    `
+    <li data-row="sub">
+
+      <span class="link-text sub-link-text">
+        ${escapeHtml(subLink)}
+      </span>
+
+      <button
+        class="btn"
+        data-act="sub-copy"
+        aria-label="Copy subscription link">
+
+        <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="12" height="12" rx="2"/>
+          <path d="M5 15V5a2 2 0 0 1 2-2h10"/>
+        </svg>
+        <span class="btn-label">Copy</span>
+
+      </button>
+
+      <button
+        class="btn"
+        data-act="sub-qr">
+
+        <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <path d="M14 14h3v3M14 20h3M20 17v3"/>
+        </svg>
+        <span class="btn-label">QR Code</span>
+
+      </button>
+
+      <span class="sub-link-badge" aria-hidden="true">Subscription</span>
+
+    </li>
+    `;
 
   list.innerHTML =
+    subRowHtml +
     links.map(
       (url,i) => {
 
@@ -2657,7 +8394,11 @@ function renderLinks(
             data-act="copy"
             aria-label="Copy subscription link">
 
-            Copy
+            <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="12" height="12" rx="2"/>
+              <path d="M5 15V5a2 2 0 0 1 2-2h10"/>
+            </svg>
+            <span class="btn-label">Copy</span>
 
           </button>
 
@@ -2666,7 +8407,13 @@ function renderLinks(
             data-i="${i}"
             data-act="qr">
 
-            QR Code
+            <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/>
+              <path d="M14 14h3v3M14 20h3M20 17v3"/>
+            </svg>
+            <span class="btn-label">QR Code</span>
 
           </button>
 
@@ -2692,6 +8439,59 @@ function renderLinks(
       }
     ).join('');
 
+  const subCopyBtn =
+    list.querySelector(
+      '[data-act="sub-copy"]'
+    );
+
+  if(subCopyBtn){
+
+    subCopyBtn.addEventListener(
+      'click',
+      () =>
+        handleCopy(
+          subLink,
+          subCopyBtn,
+          {
+            copied: 'Subscription link copied',
+            failed: 'Copy failed, please try again'
+          }
+        )
+    );
+
+  }
+
+  const subQrBtn =
+    list.querySelector(
+      '[data-act="sub-qr"]'
+    );
+
+  if(subQrBtn){
+
+    subQrBtn.addEventListener(
+      'click',
+      () => {
+
+        if(
+          activeQRIndex === 'sub'
+        ){
+
+          closeAnyQR();
+
+        }else{
+
+          showInlineQR(
+            subLink,
+            'sub'
+          );
+
+        }
+
+      }
+    );
+
+  }
+
   list
     .querySelectorAll(
       '[data-act="copy"]'
@@ -2706,7 +8506,11 @@ function renderLinks(
               links[
                 btn.dataset.i
               ],
-              btn
+              btn,
+              {
+                copied: 'Subscription link copied',
+                failed: 'Copy failed, please try again'
+              }
             )
         );
 
@@ -2780,29 +8584,7 @@ function renderLinks(
       }
     );
 
-  const copyAllBtn =
-    document.getElementById(
-      'copyAllBtn'
-    );
-
-  if(copyAllBtn){
-
-    copyAllBtn.onclick =
-      () =>
-        handleCopy(
-          allLinks.join(
-            '\n'
-          ),
-          copyAllBtn
-        );
-
-  }
-
 }
-
-/* =========================================================
-   COPY
-   ========================================================= */
 
 function fallbackCopyExec(
   text
@@ -2871,16 +8653,11 @@ function fallbackCopyExec(
 
 }
 
-function showCopyFeedback(
-  btn,
-  success
+function resetCopyFeedbackButton(
+  btn
 ){
 
-  if(!btn){
-
-    return;
-
-  }
+  if(!btn) return;
 
   if(btn._copyResetTimer){
 
@@ -2894,12 +8671,103 @@ function showCopyFeedback(
   }
 
   if(
+    !btn.classList.contains('copied') &&
+    !btn.classList.contains('copy-failed')
+  ){
+
+    return;
+
+  }
+
+  const labelEl =
+    btn.querySelector(
+      '.btn-label'
+    );
+
+  btn.classList.remove(
+    'copied',
+    'copy-failed'
+  );
+
+  if(
+    labelEl &&
+    btn._copyOriginalLabel !==
+    undefined
+  ){
+
+    labelEl.textContent =
+      btn._copyOriginalLabel;
+
+  }
+
+  if(
+    btn._copyOriginalAriaLabel !==
+    undefined
+  ){
+
+    btn.setAttribute(
+      'aria-label',
+      btn._copyOriginalAriaLabel
+    );
+
+  }
+
+}
+
+function showCopyFeedback(
+  btn,
+  success,
+  labels,
+  holdOpen
+){
+
+  if(!btn){
+
+    return;
+
+  }
+
+  labels =
+    labels ||
+    {};
+
+  const labelEl =
+    btn.querySelector(
+      '.btn-label'
+    );
+
+  if(btn._copyResetTimer){
+
+    clearTimeout(
+      btn._copyResetTimer
+    );
+
+    btn._copyResetTimer =
+      null;
+
+  }
+
+  if(
+    labelEl &&
     btn._copyOriginalLabel ===
     undefined
   ){
 
     btn._copyOriginalLabel =
-      btn.textContent.trim();
+      labelEl.textContent.trim();
+
+  }
+
+  if(
+    btn._copyOriginalAriaLabel ===
+    undefined
+  ){
+
+    btn._copyOriginalAriaLabel =
+      btn.getAttribute(
+        'aria-label'
+      ) ||
+      '';
 
   }
 
@@ -2914,12 +8782,17 @@ function showCopyFeedback(
       'copied'
     );
 
-    btn.textContent =
-      'Copied';
+    if(labelEl){
+
+      labelEl.textContent =
+        'Copied';
+
+    }
 
     btn.setAttribute(
       'aria-label',
-      'Subscription link copied'
+      labels.copied ||
+      'Copied'
     );
 
   }else{
@@ -2928,13 +8801,29 @@ function showCopyFeedback(
       'copy-failed'
     );
 
-    btn.textContent =
-      'Copy failed';
+    if(labelEl){
+
+      labelEl.textContent =
+        'Copy failed';
+
+    }
 
     btn.setAttribute(
       'aria-label',
+      labels.failed ||
       'Copy failed, please try again'
     );
+
+  }
+
+  /* holdOpen callers (the "Copy as" menu items) manage their
+     own reset — tied to the popup actually closing — instead
+     of an independent timer here, so the feedback can't revert
+     while the popup is still open. */
+
+  if(holdOpen){
+
+    return;
 
   }
 
@@ -2942,21 +8831,12 @@ function showCopyFeedback(
     setTimeout(
       () => {
 
-        btn.classList.remove(
-          'copied',
-          'copy-failed'
-        );
-
-        btn.textContent =
-          btn._copyOriginalLabel;
-
-        btn.setAttribute(
-          'aria-label',
-          'Copy subscription link'
-        );
-
         btn._copyResetTimer =
           null;
+
+        resetCopyFeedbackButton(
+          btn
+        );
 
       },
       1300
@@ -2964,30 +8844,16 @@ function showCopyFeedback(
 
 }
 
-/* Single source of truth for every Copy button on the page.
-   ROOT CAUSE of the "needs two taps" bug: this used to call the
-   async navigator.clipboard.writeText() FIRST and await it before
-   falling back to the synchronous execCommand path. Crossing that
-   await can silently drop the browser's "user activation" flag in
-   iOS Safari and many in-app/WebView browsers, so execCommand then
-   fails too on the first tap — it only succeeds on a second tap
-   once the page already has focus. Running the synchronous method
-   first (it never leaves the original tap's call stack) fixes this
-   for every Copy button at once, since they all funnel through
-   this one function. */
-
 async function handleCopy(
   text,
-  btn
+  btn,
+  labels,
+  holdOpen
 ){
 
-  let success =
-    fallbackCopyExec(
-      text
-    );
+  let success = false;
 
   if(
-    !success &&
     navigator.clipboard &&
     navigator.clipboard.writeText
   ){
@@ -3008,29 +8874,128 @@ async function handleCopy(
 
   }
 
+  if(!success){
+
+    success =
+      fallbackCopyExec(
+        text
+      );
+
+  }
+
   showCopyFeedback(
     btn,
-    success
+    success,
+    labels,
+    holdOpen
   );
 
 }
 
-/* =========================================================
-   QR (INLINE, INSERTED RIGHT AFTER THE TAPPED ROW)
-   ========================================================= */
+(function setupUsernameCopyButton(){
+
+  const btn =
+    document.getElementById(
+      'unameCopyBtn'
+    );
+
+  if(!btn){
+
+    return;
+
+  }
+
+  btn.addEventListener(
+    'click',
+    () => {
+
+      const text =
+        (
+          (
+            document.getElementById(
+              'unameOut'
+            ) ||
+            {}
+          ).textContent ||
+          ''
+        ).trim();
+
+      if(
+        !text ||
+        text === '—' ||
+        text === 'Loading'
+      ){
+
+        return;
+
+      }
+
+      handleCopy(
+        text,
+        btn,
+        {
+          copied: 'Username copied',
+          failed: 'Copy failed, try again'
+        }
+      );
+
+    }
+  );
+
+})();
 
 let activeQRIndex = null;
 
-function closeAnyQR(){
+function closeAnyQR(
+  immediate
+){
 
-  document
-    .querySelectorAll(
+  const rows =
+    document.querySelectorAll(
       'li.qr-row'
-    )
-    .forEach(
+    );
+
+  if(
+    immediate === true ||
+    prefersReducedMotion() ||
+    !rows.length
+  ){
+
+    rows.forEach(
       el =>
         el.remove()
     );
+
+  }else{
+
+    rows.forEach(
+      row => {
+
+        const box =
+          row.querySelector(
+            '.qr-inline-box'
+          );
+
+        if(box){
+
+          box.style.animation =
+            'qrBoxExit .18s ease forwards';
+
+        }
+
+        setTimeout(
+          () => {
+
+            row.remove();
+
+          },
+          180
+        );
+
+      }
+    );
+
+  }
 
   document
     .querySelectorAll(
@@ -3045,6 +9010,73 @@ function closeAnyQR(){
 
   activeQRIndex =
     null;
+
+}
+
+/* Shared QR-drawing routine used for a single config
+   link's inline QR. Falls back through progressively
+   larger QR "type numbers" since very long URLs can
+   overflow the smallest ones. */
+
+function buildInlineQRCode(
+  box,
+  url
+){
+
+  if(window.QRCode){
+
+    let built = false;
+
+    const typeNumbers =
+      [0, 4, 10, 20, 30, 40];
+
+    for(
+      let t = 0;
+      t < typeNumbers.length && !built;
+      t++
+    ){
+
+      box.innerHTML = '';
+
+      try{
+
+        new QRCode(
+          box,
+          {
+            text: url,
+            width: 220,
+            height: 220,
+            colorDark: "#111111",
+            colorLight: "#ffffff",
+            typeNumber: typeNumbers[t],
+            correctLevel:
+              QRCode.CorrectLevel.L
+          }
+        );
+
+        built = true;
+
+      }catch(e){
+
+        built = false;
+
+      }
+
+    }
+
+    if(!built){
+
+      box.innerHTML =
+        '<div style="font-size:7px;color:#a33;text-align:center;">Link too long for QR code. Use Copy instead.</div>';
+
+    }
+
+  }else{
+
+    box.textContent =
+      '…';
+
+  }
 
 }
 
@@ -3063,7 +9095,9 @@ function showInlineQR(
       'li[data-row="' + idx + '"]'
     );
 
-  closeAnyQR();
+  closeAnyQR(
+    true
+  );
 
   if(!targetLi){
 
@@ -3074,6 +9108,11 @@ function showInlineQR(
   targetLi.classList.add(
     'active-qr'
   );
+
+  const qrLabel =
+    idx === 'sub'
+      ? 'SUBSCRIPTION'
+      : linkType(url).toUpperCase();
 
   const qrLi =
     document.createElement(
@@ -3089,14 +9128,17 @@ function showInlineQR(
 
       <button
         class="qr-inline-close"
-        type="button">
-        ✕
+        type="button"
+        aria-label="Close QR code">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 6l12 12M18 6L6 18"/>
+        </svg>
       </button>
 
       <div id="qrInlineBox"></div>
 
       <div class="qr-inline-label">
-        ${linkType(url).toUpperCase()}
+        ${qrLabel}
       </div>
 
     </div>
@@ -3107,41 +9149,12 @@ function showInlineQR(
     qrLi
   );
 
-  const box =
+  buildInlineQRCode(
     qrLi.querySelector(
       '#qrInlineBox'
-    );
-
-  if(window.QRCode){
-
-    try{
-
-      new QRCode(
-        box,
-        {
-          text:url,
-          width:220,
-          height:220,
-          colorDark:"#111111",
-          colorLight:"#ffffff",
-          correctLevel:
-            QRCode.CorrectLevel.L
-        }
-      );
-
-    }catch(e){
-
-      box.innerHTML =
-        '<div style="font-size:7px;color:#a33;text-align:center;">Link too long for QR code. Use Copy instead.</div>';
-
-    }
-
-  }else{
-
-    box.textContent =
-      '…';
-
-  }
+    ),
+    url
+  );
 
   qrLi
     .querySelector(
@@ -3156,10 +9169,6 @@ function showInlineQR(
     idx;
 
 }
-
-/* =========================================================
-   LINKS TOGGLE
-   ========================================================= */
 
 function toggleLinks(){
 
@@ -3177,19 +9186,125 @@ function toggleLinks(){
     list.style.display ===
     'none';
 
-  list.style.display =
-    collapsed
-      ? ''
-      : 'none';
-
   chevron.classList.toggle(
     'collapsed',
     !collapsed
   );
 
-  if(!collapsed){
+  if(list._collapseTimer){
 
-    closeAnyQR();
+    clearTimeout(
+      list._collapseTimer
+    );
+
+    list._collapseTimer =
+      null;
+
+  }
+
+  if(
+    prefersReducedMotion()
+  ){
+
+    list.style.maxHeight =
+      '';
+
+    list.style.opacity =
+      '';
+
+    list.style.display =
+      collapsed
+        ? ''
+        : 'none';
+
+    if(!collapsed){
+
+      closeAnyQR(
+        true
+      );
+
+    }
+
+    return;
+
+  }
+
+  if(collapsed){
+
+    list.style.display =
+      '';
+
+    list.style.maxHeight =
+      '0px';
+
+    list.style.opacity =
+      '0';
+
+    void list.offsetHeight;
+
+    const target =
+      list.scrollHeight;
+
+    list.style.maxHeight =
+      target +
+      'px';
+
+    list.style.opacity =
+      '1';
+
+    staggerReveal(
+      list.children,
+      30
+    );
+
+    list._collapseTimer =
+      setTimeout(
+        () => {
+
+          list.style.maxHeight =
+            'none';
+
+          list._collapseTimer =
+            null;
+
+        },
+        320
+      );
+
+  }else{
+
+    closeAnyQR(
+      true
+    );
+
+    const current =
+      list.scrollHeight;
+
+    list.style.maxHeight =
+      current +
+      'px';
+
+    void list.offsetHeight;
+
+    list.style.maxHeight =
+      '0px';
+
+    list.style.opacity =
+      '0';
+
+    list._collapseTimer =
+      setTimeout(
+        () => {
+
+          list.style.display =
+            'none';
+
+          list._collapseTimer =
+            null;
+
+        },
+        320
+      );
 
   }
 
@@ -3204,15 +9319,7 @@ document
     toggleLinks
   );
 
-/* =========================================================
-   USAGE CHART
-   ========================================================= */
-
 let usageRequestSeq = 0;
-
-/* =========================================================
-   CURRENT MONTH RANGE
-   ========================================================= */
 
 function rangeToDates(){
 
@@ -3256,10 +9363,6 @@ function rangeToDates(){
 
 }
 
-/* =========================================================
-   CHART RANGE OPTIONS (SELECTOR)
-   ========================================================= */
-
 const DEFAULT_USAGE_RANGE = '7d';
 
 function getChartRangeBounds(
@@ -3289,8 +9392,6 @@ function getChartRangeBounds(
   }
 
   if(rangeId === 'month'){
-
-    /* Previous calendar month, full boundaries */
 
     const year =
       now.getFullYear();
@@ -3328,8 +9429,6 @@ function getChartRangeBounds(
 
   }
 
-  /* Default: last 7 days (calendar days, inclusive of today) */
-
   const start =
     new Date(
       now.getFullYear(),
@@ -3351,10 +9450,6 @@ function getChartRangeBounds(
   };
 
 }
-
-/* =========================================================
-   USAGE FIELD NAMES
-   ========================================================= */
 
 const USAGE_DATE_KEYS = [
 
@@ -3381,10 +9476,6 @@ const USAGE_VALUE_KEYS = [
   'total'
 
 ];
-
-/* =========================================================
-   USAGE VALUE
-   ========================================================= */
 
 function usageValueFrom(
   obj
@@ -3461,10 +9552,6 @@ function usageValueFrom(
 
 }
 
-/* =========================================================
-   USAGE DATE
-   ========================================================= */
-
 function usageDateFrom(
   obj
 ){
@@ -3506,10 +9593,6 @@ function usageDateFrom(
 
 }
 
-/* =========================================================
-   FIND USAGE LIST
-   ========================================================= */
-
 function findUsageList(
   data
 ){
@@ -3537,6 +9620,7 @@ function findUsageList(
     'usages',
     'node_usages',
     'nodes',
+    'stats',
     'data',
     'items',
     'records',
@@ -3581,10 +9665,6 @@ function findUsageList(
   return [];
 
 }
-
-/* =========================================================
-   EXTRACT TRAFFIC ENTRIES
-   ========================================================= */
 
 function extractTrafficEntries(
   data
@@ -3676,10 +9756,6 @@ function extractTrafficEntries(
 
 }
 
-/* =========================================================
-   TOTAL
-   ========================================================= */
-
 function computeUsageTotal(
   data,
   entries
@@ -3737,10 +9813,6 @@ function computeUsageTotal(
   );
 
 }
-
-/* =========================================================
-   GROUP BY DAY
-   ========================================================= */
 
 function bucketEntries(
   entries,
@@ -3894,10 +9966,6 @@ function bucketEntries(
     );
 
 }
-
-/* =========================================================
-   DATE FORMAT
-   ========================================================= */
 
 function formatDayOfMonthLabel(
   ms
@@ -4058,10 +10126,6 @@ function formatAxisRangeLabel(
 
 }
 
-/* =========================================================
-   USAGE STATS (AVERAGE / PEAK / AXIS)
-   ========================================================= */
-
 function updateUsageStats(
   points,
   unit
@@ -4137,15 +10201,27 @@ function updateUsageStats(
 
   }
 
-  avgEl.textContent =
+  animateStatValue(
+    avgEl,
     formatBytes(
       avg
-    );
+    )
+  );
 
-  peakEl.textContent =
+  avgEl.classList.remove(
+    'ph-loading'
+  );
+
+  animateStatValue(
+    peakEl,
     formatBytes(
       peak
-    );
+    )
+  );
+
+  peakEl.classList.remove(
+    'ph-loading'
+  );
 
   const peakIndex =
     values.indexOf(
@@ -4191,6 +10267,10 @@ function updateUsageStats(
         unit
       );
 
+    axisStartEl.classList.remove(
+      'ph-loading'
+    );
+
     axisEndEl.textContent =
       formatAxisRangeLabel(
         points[
@@ -4199,13 +10279,13 @@ function updateUsageStats(
         unit
       );
 
+    axisEndEl.classList.remove(
+      'ph-loading'
+    );
+
   }
 
 }
-
-/* =========================================================
-   LINE CHART
-   ========================================================= */
 
 let usageChartState =
   null;
@@ -4219,8 +10299,9 @@ function hideUsageTooltip(){
 
   if(tooltip){
 
-    tooltip.style.display =
-      'none';
+    tooltip.classList.remove(
+      'show'
+    );
 
   }
 
@@ -4236,12 +10317,6 @@ function hideUsageTooltip(){
     );
 
 }
-
-/* Turns the selected point's SVG-space coordinates into real
-   pixels inside the (position:relative) chart box, then clamps/
-   flips the tooltip so it always stays a fully-visible floating
-   popup next to the point — never pinned to a fixed corner,
-   never clipped, never stuck behind the stats above the chart. */
 
 function positionUsageTooltip(
   index
@@ -4316,9 +10391,6 @@ function positionUsageTooltip(
     gap;
 
   if(top < 0){
-
-    /* Not enough room above the point — flip below it
-       instead of letting it go off (or behind other UI). */
 
     top =
       pointPxY +
@@ -4458,8 +10530,9 @@ function showUsageTooltipForIndex(
       )
     );
 
-  tooltip.style.display =
-    'block';
+  tooltip.classList.add(
+    'show'
+  );
 
   positionUsageTooltip(
     idx
@@ -4477,6 +10550,32 @@ function handleUsageChartClick(
   ){
 
     return;
+
+  }
+
+  if(
+    evt.cancelable
+  ){
+
+    evt.preventDefault();
+
+  }
+
+  if(
+    window.getSelection
+  ){
+
+    const sel =
+      window.getSelection();
+
+    if(
+      sel &&
+      sel.removeAllRanges
+    ){
+
+      sel.removeAllRanges();
+
+    }
 
   }
 
@@ -4728,8 +10827,6 @@ function renderLineChart(
 
   }
 
-  /* Grid */
-
   [
     0,
     .25,
@@ -4782,8 +10879,6 @@ function renderLineChart(
 
     }
   );
-
-  /* Line (smooth curve, no sharp breaks) */
 
   const coords =
     points.map(
@@ -4923,8 +11018,6 @@ function renderLineChart(
     lineD
   );
 
-  /* Area */
-
   const firstX =
     x(0);
 
@@ -4954,9 +11047,6 @@ function renderLineChart(
     areaD
   );
 
-  /* Points (custom tap/click tooltip handles interaction — see
-     handleUsageChartClick) */
-
   points.forEach(
     (
       p,
@@ -4983,7 +11073,9 @@ function renderLineChart(
 
       circle.setAttribute(
         'r',
-        '4'
+        prefersReducedMotion()
+          ? '4'
+          : '0'
       );
 
       circle.setAttribute(
@@ -4991,15 +11083,25 @@ function renderLineChart(
         'usage-line-point'
       );
 
+      if(
+        !prefersReducedMotion()
+      ){
+
+        circle.style.transitionDelay =
+          (
+            300 +
+            i * 35
+          ) +
+          'ms';
+
+      }
+
       pointsGroup.appendChild(
         circle
       );
 
     }
   );
-
-  /* Axis tick labels — thinned to roughly 8 ticks regardless of
-     bucket unit or range length */
 
   const labelStep =
     count > 10
@@ -5060,6 +11162,103 @@ function renderLineChart(
     }
   );
 
+  if(
+    prefersReducedMotion()
+  ){
+
+    linePath.style.transition =
+      'none';
+
+    linePath.style.strokeDasharray =
+      'none';
+
+    linePath.style.strokeDashoffset =
+      '0';
+
+    areaPath.style.transition =
+      'none';
+
+    areaPath.style.opacity =
+      '1';
+
+  }else{
+
+    let pathLen =
+      0;
+
+    try{
+
+      pathLen =
+        linePath.getTotalLength();
+
+    }catch(e){
+
+      pathLen =
+        0;
+
+    }
+
+    linePath.style.transition =
+      'none';
+
+    linePath.style.strokeDasharray =
+      pathLen;
+
+    linePath.style.strokeDashoffset =
+      pathLen;
+
+    areaPath.style.transition =
+      'none';
+
+    areaPath.style.opacity =
+      '0';
+
+    /* force reflow so the
+       browser registers the
+       "from" state before we
+       flip to the animated
+       "to" state */
+    void linePath.getBoundingClientRect();
+
+    requestAnimationFrame(
+      () => {
+
+        requestAnimationFrame(
+          () => {
+
+            linePath.style.transition =
+              'stroke-dashoffset .9s cubic-bezier(.4,0,.2,1)';
+
+            linePath.style.strokeDashoffset =
+              '0';
+
+            areaPath.style.transition =
+              'opacity .7s ease .25s';
+
+            areaPath.style.opacity =
+              '1';
+
+            pointsGroup.querySelectorAll(
+              '.usage-line-point'
+            ).forEach(
+              c => {
+
+                c.setAttribute(
+                  'r',
+                  '4'
+                );
+
+              }
+            );
+
+          }
+        );
+
+      }
+    );
+
+  }
+
   usageChartState =
     {
       points,
@@ -5090,15 +11289,6 @@ const usageChartHitEl =
   );
 
 if(usageChartHitEl){
-
-  /* pointerdown fires the instant a finger/mouse makes contact —
-     unlike a bare 'click', it isn't delayed while the browser
-     waits to see whether the touch turns into a scroll or a
-     double-tap-to-zoom gesture. That wait (inside a horizontally
-     scrollable, pinch-zoomable page) is what previously made the
-     first tap on a chart point look like it did nothing on iOS
-     Safari. touch-action:manipulation (see CSS) removes that
-     disambiguation delay entirely; pointerdown removes the rest. */
 
   usageChartHitEl.addEventListener(
     'pointerdown',
@@ -5204,10 +11394,6 @@ document.addEventListener(
   }
 );
 
-/* =========================================================
-   TOTAL USAGE (AUTHORITATIVE — FROM USER OBJECT, NOT A RANGE)
-   ========================================================= */
-
 function setUsageTotalsFromUser(
   user
 ){
@@ -5250,16 +11436,18 @@ function setUsageTotalsFromUser(
           0
         );
 
-  totalEl.textContent =
+  animateStatValue(
+    totalEl,
     formatBytes(
       total
-    );
+    )
+  );
+
+  totalEl.classList.remove(
+    'ph-loading'
+  );
 
 }
-
-/* =========================================================
-   THIS MONTH (CALENDAR MONTH TO DATE)
-   ========================================================= */
 
 async function loadUsageThisMonth(){
 
@@ -5275,7 +11463,11 @@ async function loadUsageThisMonth(){
   }
 
   monthEl.textContent =
-    'Loading…';
+    'Loading';
+
+  monthEl.classList.add(
+    'ph-loading'
+  );
 
   const range =
     rangeToDates();
@@ -5330,10 +11522,16 @@ async function loadUsageThisMonth(){
         entries
       );
 
-    monthEl.textContent =
+    animateStatValue(
+      monthEl,
       formatBytes(
         total
-      );
+      )
+    );
+
+    monthEl.classList.remove(
+      'ph-loading'
+    );
 
   }catch(e){
 
@@ -5344,15 +11542,15 @@ async function loadUsageThisMonth(){
     );
 
     monthEl.textContent =
-      '—';
+      'Loading';
+
+    monthEl.classList.add(
+      'ph-loading'
+    );
 
   }
 
 }
-
-/* =========================================================
-   CHART (RANGE-SELECTABLE: 24H / 7D / LAST MONTH)
-   ========================================================= */
 
 let selectedUsageRange =
   DEFAULT_USAGE_RANGE;
@@ -5608,6 +11806,23 @@ function initUsageRangeSelector(){
 
   }
 
+  /* loadUsage() (and therefore this) reruns on every init(),
+     including every "Retry" click after a failed load — without
+     this guard, each rerun would stack another click listener
+     on every button, so one tap after a couple of retries would
+     fire loadUsageChart() multiple times at once. */
+  if(
+    selector.dataset.initialized ===
+    'true'
+  ){
+
+    return;
+
+  }
+
+  selector.dataset.initialized =
+    'true';
+
   selector
     .querySelectorAll(
       '.usage-range-btn'
@@ -5640,10 +11855,6 @@ function initUsageRangeSelector(){
 
 }
 
-/* =========================================================
-   LOAD USAGE (ENTRY POINT)
-   ========================================================= */
-
 async function loadUsage(){
 
   initUsageRangeSelector();
@@ -5656,10 +11867,6 @@ async function loadUsage(){
   ]);
 
 }
-
-/* =========================================================
-   APPS
-   ========================================================= */
 
 function detectPlatform(){
 
@@ -5919,11 +12126,6 @@ const PLATFORM_LABELS = {
 
 };
 
-/* Generic, dependency-free placeholder icon (inline SVG — no
-   network request, so it can never itself 404/fail). Used
-   centrally for any app with a missing or broken icon_url,
-   instead of duplicating fallback logic per app/platform. */
-
 const APP_ICON_FALLBACK_SVG =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
   '<rect x="1" y="1" width="22" height="22" rx="5" fill="#e6e6e6"/>' +
@@ -5948,10 +12150,6 @@ function handleAppIconError(
     return;
 
   }
-
-  /* Guard against the fallback itself ever re-triggering
-     onerror (it can't, being an inline data URI, but this
-     keeps the handler safe if that ever changes). */
 
   imgEl.onerror =
     null;
@@ -6183,13 +12381,23 @@ function renderApps(
           )
           .map(
             d =>
-              `<a href="${escapeAttr(d.url || '')}" target="_blank" rel="noopener noreferrer">${escapeHtml(d.name || 'Download')}</a>`
+              `<a href="${escapeAttr(sanitizeUrl(d.url))}" target="_blank" rel="noopener noreferrer">${escapeHtml(d.name || 'Download')}</a>`
           )
           .join('');
 
-        const imp =
+        const safeImportUrl =
           app.import_url
-            ? `<a class="im" href="${escapeAttr(app.import_url)}" target="_blank" rel="noopener noreferrer">Add</a>`
+            ? sanitizeUrl(
+                app.import_url,
+                {
+                  denyOnly: true
+                }
+              )
+            : '';
+
+        const imp =
+          safeImportUrl
+            ? `<a class="im" href="${escapeAttr(safeImportUrl)}" target="_blank" rel="noopener noreferrer">Add</a>`
             : '';
 
         const desc =
@@ -6238,11 +12446,14 @@ function renderApps(
       }
     ).join('');
 
-}
+  staggerReveal(
+    list.querySelectorAll(
+      '.app-item'
+    ),
+    35
+  );
 
-/* =========================================================
-   INIT
-   ========================================================= */
+}
 
 async function fetchAnnounceHeaders(
   base
@@ -6300,8 +12511,6 @@ async function init(){
   const base =
     subUrl();
 
-  /* USER */
-
   try{
 
     const [
@@ -6341,7 +12550,10 @@ async function init(){
 
     [
       'announce',
-      'announce-url'
+      'announce-url',
+      'support-url',
+      'support',
+      'telegram'
     ].forEach(
       h => {
 
@@ -6373,6 +12585,13 @@ async function init(){
       respHeaders
     );
 
+    renderSupportFab(
+      getSupportUrl(
+        user,
+        respHeaders
+      )
+    );
+
   }catch(e){
 
     console.error(
@@ -6380,14 +12599,19 @@ async function init(){
       e
     );
 
-    document.getElementById(
-      'unameOut'
-    ).textContent =
-      'Error loading user info';
+    showLoadError();
 
   }
 
-  /* LINKS */
+  /* LINKS
+     /sub/{token}/links resolves via the templated
+     /sub/{token}/{client_type} route, where "links" is one of
+     the ConfigFormat enum values (links, links_base64, xray,
+     wireguard, sing_box, clash, clash_meta, outline, block).
+     It returns the user's proxy configs as plain
+     newline-separated URIs — exactly what this page needs.
+     (/sub/{token}/raw is a different, JSON debug-style
+     endpoint and is not meant for this.) */
 
   try{
 
@@ -6410,17 +12634,9 @@ async function init(){
       await res.text();
 
     const links =
-      text
-        .split(
-          /\r?\n/
-        )
-        .map(
-          l =>
-            l.trim()
-        )
-        .filter(
-          Boolean
-        );
+      parseRawSubscriptionLinks(
+        text
+      );
 
     renderLinks(
       links
@@ -6434,8 +12650,6 @@ async function init(){
       '<li>Error loading links</li>';
 
   }
-
-  /* APPS */
 
   try{
 
@@ -6467,17 +12681,93 @@ async function init(){
 
   }
 
-  /* USAGE */
-
   loadUsage();
 
 }
 
-/* =========================================================
-   START
-   ========================================================= */
+initSupportFab();
+
+initCopyAsMenu();
+
+setupDataUsedSwipe();
+
+window.addEventListener(
+  'resize',
+  () => {
+    syncDuPageHeight();
+  }
+);
 
 init();
+
+setInterval(
+  refreshDataUsedCard,
+  45000
+);
+
+let offlineToastTimer = null;
+
+window.addEventListener(
+  'offline',
+  () => {
+
+    if(offlineToastTimer){
+
+      clearTimeout(
+        offlineToastTimer
+      );
+
+      offlineToastTimer =
+        null;
+
+    }
+
+    offlineToastTimer =
+      setTimeout(
+        () => {
+
+          offlineToastTimer =
+            null;
+
+          if(!navigator.onLine){
+
+            showRefreshToast(
+              'error',
+              'No Connection',
+              "You're offline — showing last known values",
+              8000
+            );
+
+          }
+
+        },
+        3000
+      );
+
+  }
+);
+
+window.addEventListener(
+  'online',
+  () => {
+
+    if(offlineToastTimer){
+
+      clearTimeout(
+        offlineToastTimer
+      );
+
+      offlineToastTimer =
+        null;
+
+    }
+
+    refreshDataUsedCard(
+      true
+    );
+
+  }
+);
 
 </script>
 

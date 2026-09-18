@@ -18,36 +18,43 @@
 **ویژگی‌ها**
 
 - نمایش وضعیت اشتراک، حجم مصرفی و تاریخ انقضا
+- نمودار مصرف داده (روزانه/هفتگی/ماهانه)
 - تولید QR کد برای هر لینک کانفیگ
-- دکمه‌ی کپی همه‌ی لینک‌ها با یک کلیک
 - دانلود مستقیم کانفیگ WireGuard
-- نمایش اعلان و اطلاعیه از پنل
-- تشخیص خودکار سیستم‌عامل کاربر (Android, iOS, Windows, Linux)
 - طراحی شیشه‌ای، سبک و کاملاً ریسپانسیو
 
-**نصب سریع**
+**آپدیت‌های اخیر**
 
-وارد سرور پاسارگارد شوید و فایل قالب را دانلود کنید:
+- افزودن نمایش محدودیت تعداد دستگاه (HWID)
+- اضافه شدن رینگ مصرف
+- افزودن پاپ‌آپ «اطلاعات بیشتر» (بازنشانی دوره‌ای حجم، آخرین IP متصل‌شده، پلن بعدی)
+- افزودن حالت تاریک خودکار
+- افزودن دکمه‌ی شناور پشتیبانی
+- افزودن کپی کانفیگ با فرمت‌های Links (raw), Links (base64), Xray/V2Ray, Sing-box, Clash, Clash Meta (Mihomo), WireGuard, Outline
+
+## نصب دستی
+
+### ۱. دانلود قالب
 
 ```
 sudo mkdir -p /var/lib/pasarguard/templates/subscription/
-sudo wget -N -P /var/lib/pasarguard/templates/subscription/ https://raw.githubusercontent.com/HiccupRYU/Subscription-Page/main/index.html
+sudo wget -N -O /var/lib/pasarguard/templates/subscription/index.html https://raw.githubusercontent.com/HiccupRYU/Subscription-Page/main/index.html
 ```
 
-فایل تنظیمات پاسارگارد را ویرایش کنید:
+### ۲. تنظیم Pasarguard
 
 ```
 sudo nano /opt/pasarguard/.env
 ```
 
-مقادیر زیر را اضافه یا اصلاح کنید:
+اضافه یا به‌روز کنید:
 
 ```
 CUSTOM_TEMPLATES_DIRECTORY="/var/lib/pasarguard/templates/"
 SUBSCRIPTION_PAGE_TEMPLATE="subscription/index.html"
 ```
 
-در پایان پاسارگارد را ریستارت کنید:
+### ۳. راه‌اندازی مجدد
 
 ```
 sudo pasarguard restart
@@ -64,36 +71,43 @@ A subscription page template for the **PasarGuard** panel — fully **responsive
 **Features**
 
 - Displays subscription status, used traffic, and expiration date
+- Data usage chart (daily/weekly/monthly)
 - Generates a QR code for each config link
-- One-click "Copy All" for every config link
 - Direct WireGuard config download
-- Shows announcements/notices from the panel
-- Automatic OS detection (Android, iOS, Windows, Linux)
 - Lightweight glassmorphism design, fully responsive
 
-**Quick Install**
+**Recent Updates**
 
-Log in to your PasarGuard server and download the template file:
+- Added device limit (HWID) display
+- Added usage ring
+- Added "More info" popup (periodic usage reset, last connected IP, next plan)
+- Added automatic dark mode
+- Added floating support button
+- Added config copy formats: Links (raw), Links (base64), Xray/V2Ray, Sing-box, Clash, Clash Meta (Mihomo), WireGuard, Outline
+
+## Manual Install
+
+### 1. Download the template
 
 ```
 sudo mkdir -p /var/lib/pasarguard/templates/subscription/
-sudo wget -N -P /var/lib/pasarguard/templates/subscription/ https://raw.githubusercontent.com/HiccupRYU/Subscription-Page/main/index.html
+sudo wget -N -O /var/lib/pasarguard/templates/subscription/index.html https://raw.githubusercontent.com/HiccupRYU/Subscription-Page/main/index.html
 ```
 
-Edit the PasarGuard env file:
+### 2. Configure PasarGuard
 
 ```
 sudo nano /opt/pasarguard/.env
 ```
 
-Add or update the following values:
+Add or update:
 
 ```
 CUSTOM_TEMPLATES_DIRECTORY="/var/lib/pasarguard/templates/"
 SUBSCRIPTION_PAGE_TEMPLATE="subscription/index.html"
 ```
 
-Finally, restart PasarGuard:
+### 3. Restart
 
 ```
 sudo pasarguard restart
@@ -110,36 +124,43 @@ PasarGuard 面板的订阅页面模板 — 完全**响应式**设计，适配手
 **功能特点**
 
 - 显示订阅状态、已用流量和到期时间
+- 流量使用图表（日/周/月）
 - 为每个配置链接生成二维码
-- 一键复制所有配置链接
 - 直接下载 WireGuard 配置文件
-- 显示来自面板的公告/通知
-- 自动检测操作系统（Android、iOS、Windows、Linux）
 - 轻量玻璃拟态设计，完全响应式
 
-**快速安装**
+**最近更新**
 
-登录 PasarGuard 服务器并下载模板文件：
+- 新增设备数量限制（HWID）显示
+- 新增流量使用环形图
+- 新增“更多信息”弹窗（周期性流量重置、最后连接 IP、下一个套餐）
+- 新增自动深色模式
+- 新增悬浮客服支持按钮
+- 新增配置复制格式：Links (raw)、Links (base64)、Xray/V2Ray、Sing-box、Clash、Clash Meta (Mihomo)、WireGuard、Outline
+
+## 手动安装
+
+### 1. 下载模板
 
 ```
 sudo mkdir -p /var/lib/pasarguard/templates/subscription/
-sudo wget -N -P /var/lib/pasarguard/templates/subscription/ https://raw.githubusercontent.com/HiccupRYU/Subscription-Page/main/index.html
+sudo wget -N -O /var/lib/pasarguard/templates/subscription/index.html https://raw.githubusercontent.com/HiccupRYU/Subscription-Page/main/index.html
 ```
 
-编辑 PasarGuard 的环境配置文件：
+### 2. 配置 PasarGuard
 
 ```
 sudo nano /opt/pasarguard/.env
 ```
 
-添加或修改以下内容：
+添加或修改：
 
 ```
 CUSTOM_TEMPLATES_DIRECTORY="/var/lib/pasarguard/templates/"
 SUBSCRIPTION_PAGE_TEMPLATE="subscription/index.html"
 ```
 
-最后重启 PasarGuard：
+### 3. 重启
 
 ```
 sudo pasarguard restart
@@ -156,36 +177,43 @@ sudo pasarguard restart
 **Возможности**
 
 - Отображение статуса подписки, использованного трафика и даты окончания
+- График использования трафика (по дням/неделям/месяцам)
 - Генерация QR-кода для каждой конфигурации
-- Копирование всех ссылок одним нажатием
 - Прямая загрузка конфигурации WireGuard
-- Отображение объявлений/уведомлений с панели
-- Автоматическое определение ОС (Android, iOS, Windows, Linux)
 - Лёгкий дизайн в стиле glassmorphism, полностью адаптивный
 
-**Быстрая установка**
+**Последние обновления**
 
-Войдите на сервер PasarGuard и скачайте файл шаблона:
+- Добавлено отображение лимита устройств (HWID)
+- Добавлено кольцо использования трафика
+- Добавлено окно «Подробнее» (периодический сброс трафика, последний IP, следующий тариф)
+- Добавлена автоматическая тёмная тема
+- Добавлена плавающая кнопка поддержки
+- Добавлены форматы копирования конфигурации: Links (raw), Links (base64), Xray/V2Ray, Sing-box, Clash, Clash Meta (Mihomo), WireGuard, Outline
+
+## Установка вручную
+
+### 1. Скачать шаблон
 
 ```
 sudo mkdir -p /var/lib/pasarguard/templates/subscription/
-sudo wget -N -P /var/lib/pasarguard/templates/subscription/ https://raw.githubusercontent.com/HiccupRYU/Subscription-Page/main/index.html
+sudo wget -N -O /var/lib/pasarguard/templates/subscription/index.html https://raw.githubusercontent.com/HiccupRYU/Subscription-Page/main/index.html
 ```
 
-Отредактируйте файл конфигурации PasarGuard:
+### 2. Настроить PasarGuard
 
 ```
 sudo nano /opt/pasarguard/.env
 ```
 
-Добавьте или измените следующие значения:
+Добавьте или измените:
 
 ```
 CUSTOM_TEMPLATES_DIRECTORY="/var/lib/pasarguard/templates/"
 SUBSCRIPTION_PAGE_TEMPLATE="subscription/index.html"
 ```
 
-В конце перезапустите PasarGuard:
+### 3. Перезапуск
 
 ```
 sudo pasarguard restart

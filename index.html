@@ -2741,6 +2741,18 @@ li.qr-row::before{
     fill:#8f8f96;
   }
 
+  .usage-tooltip{
+    background:rgba(28,35,51,.96);
+    color:#f2f2f4;
+    box-shadow:
+      0 4px 10px rgba(0,0,0,.4),
+      0 0 0 1px #2c3a5a;
+  }
+
+  .usage-tooltip strong{
+    color:#8fb0ff;
+  }
+
   .app-item{
     border-top-color:#2a2c32;
   }
@@ -12397,7 +12409,7 @@ function renderApps(
 
         const imp =
           safeImportUrl
-            ? `<a class="im" href="${escapeAttr(safeImportUrl)}" target="_blank" rel="noopener noreferrer">Add</a>`
+            ? `<a class="im" href="${escapeAttr(safeImportUrl)}">Add</a>`
             : '';
 
         const desc =
